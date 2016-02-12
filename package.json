@@ -1,0 +1,29 @@
+{
+  "name": "dnd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.coffee",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RichardJohnn/DND.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "richard",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/RichardJohnn/DND/issues"
+  },
+  "homepage": "https://github.com/RichardJohnn/DND#readme",
+  "dependencies": {
+    "blessed": "^0.1.81"
+  }
+}
