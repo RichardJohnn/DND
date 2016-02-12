@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/RichardJohnn/DND#readme",
   "dependencies": {
-    "blessed": "^0.1.81"
+    "blessed": "^0.1.81",
+    "lodash": "^4.3.0",
+    "play-sound": "0.0.7"
   }
 }

@@ -1,4 +1,6 @@
 blessed = require 'blessed'
+player  = require('play-sound')(opts = {})
+_       = require 'lodash'
 
 screen = blessed.screen({fastCSR: true})
 
@@ -31,12 +33,11 @@ bigmap   = __dirname + '/lib/assets/worldgenerator/seed_33484_elevation.png'
 
 file = bigmap
 icon = blessed.image
-  parent: screen
+  parent: box
   top: 0
   left: 0
   type: 'ansi'
   width: '100%'
-  #height: '100%'
   scale: .1
   file: file
   search: false
@@ -53,8 +54,16 @@ box.key 'enter', (ch, key) ->
 
 screen.key ['escape', 'q', 'C-c'], (ch, key) -> process.exit(0)
 
-screen.key ['j'], (ch, key) -> icon.top -= 10
-screen.key ['k'], (ch, key) -> icon.top += 10
+mapStepSize = 10
+walk = (wat, huh, where) ->
+  wat[huh] += where
+  player.play('./lib/assets/sound/steps.wav', (err) -> )
+walkDatIcon = _.partial(walk, icon)
+
+screen.key ['j'], (ch, key) -> walkDatIcon('top',  -1 * mapStepSize)
+screen.key ['k'], (ch, key) -> walkDatIcon('top',  mapStepSize)
+screen.key ['h'], (ch, key) -> walkDatIcon('left', -1 * mapStepSize)
+screen.key ['l'], (ch, key) -> walkDatIcon('left',  mapStepSize)
 
 mapScale = .1
 
@@ -76,9 +85,6 @@ setInterval ->
   box.style.bg =
     if box.style.bg is 'green' then 'magenta' else 'green'
 
-  icon.scale = mapScale
-  #icon.setImage(
-    #if icon.file is werewolf then troll else werewolf)
   screen.render()
 ,100
 
