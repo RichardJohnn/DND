@@ -53,8 +53,8 @@ box.key 'enter', (ch, key) ->
 
 screen.key ['escape', 'q', 'C-c'], (ch, key) -> process.exit(0)
 
-screen.key ['j'], (ch, key) -> icon.top += 10
-screen.key ['k'], (ch, key) -> icon.top -= 10
+screen.key ['j'], (ch, key) -> icon.top -= 10
+screen.key ['k'], (ch, key) -> icon.top += 10
 
 mapScale = .1
 
