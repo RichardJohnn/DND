@@ -1,12 +1,15 @@
 REPORTER = spec
 
-all: jshint test
+all: coffee-jshint test
+
+clean:
+	rm -rf ./node_modules
 
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter $(REPORTER) --timeout 3000
 
-jshint:
-	jshint lib examples test index.coffee
+coffee-jshint:
+	coffee-jshint lib examples test index.coffee
 
 tests: test
 
@@ -21,4 +24,4 @@ skel:
 	touch index.coffee
 	npm install mocha chai --save-dev
 
-.PHONY: test tap unit jshint skel
+.PHONY: test tap unit coffee-jshint skel

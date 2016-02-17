@@ -26,6 +26,11 @@
   "dependencies": {
     "blessed": "^0.1.81",
     "lodash": "^4.3.0",
-    "play-sound": "0.0.7"
+    "play-sound": "0.0.7",
+    "sfx": "^0.1.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
   }
 }
