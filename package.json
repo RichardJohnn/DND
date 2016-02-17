@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/RichardJohnn/DND#readme",
   "dependencies": {
+    "coffee-script": "1.10.0",
     "blessed": "^0.1.81",
     "lodash": "^4.3.0",
     "play-sound": "0.0.7",
