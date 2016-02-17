@@ -17,7 +17,6 @@ describe 'Battle', ->
       sideIdentifier = 'team'
       battle = new Battle(@entities, sideIdentifier)
       sides = battle.sides
-      console.log battle.order
       keys = Object.keys(sides)
 
       expect(keys.length).to.equal 2
@@ -26,9 +25,6 @@ describe 'Battle', ->
     it 'should pick random order for which side fights', ->
       sideIdentifier = 'team'
       battle = new Battle(@entities, sideIdentifier)
-
-      #for o in battle.order
-        #console.log o
 
       firstTeam  = battle.order[0].team
       secondTeam = battle.order[1].team
