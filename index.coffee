@@ -1,6 +1,8 @@
 blessed = require 'blessed'
-player  = require('play-sound')(opts = {})
+player  = require 'sfx'
 _       = require 'lodash'
+
+player.say("Welcome Green Elf")
 
 screen = blessed.screen({fastCSR: true})
 
@@ -34,11 +36,11 @@ bigmap   = __dirname + '/lib/assets/worldgenerator/seed_33484_elevation.png'
 file = bigmap
 icon = blessed.image
   parent: box
-  top: 0
-  left: 0
+  top: -300
+  left: -300
   type: 'ansi'
-  width: '100%'
-  scale: .1
+  #height: '100%'
+  #width: '100%'
   file: file
   search: false
 
@@ -57,7 +59,8 @@ screen.key ['escape', 'q', 'C-c'], (ch, key) -> process.exit(0)
 mapStepSize = 10
 walk = (wat, huh, where) ->
   wat[huh] += where
-  player.play('./lib/assets/sound/steps.wav', (err) -> )
+  file = if Math.random() > .5 then '' else '2'
+  player.play("./lib/assets/sound/steps#{file}.wav", 5)
 walkDatIcon = _.partial(walk, icon)
 
 screen.key ['j'], (ch, key) -> walkDatIcon('top',  -1 * mapStepSize)
@@ -65,12 +68,11 @@ screen.key ['k'], (ch, key) -> walkDatIcon('top',  mapStepSize)
 screen.key ['h'], (ch, key) -> walkDatIcon('left', -1 * mapStepSize)
 screen.key ['l'], (ch, key) -> walkDatIcon('left',  mapStepSize)
 
-mapScale = .1
+mapScale = 1
 
 screen.key ['m'], (ch, key) ->
   icon.width = icon.height = "100%"
-  #icon.scale = mapScale
-  icon.parent = screen
+  icon.scale = mapScale
   icon.setImage(bigmap)
 
 screen.key ['r'], (ch, key) ->
@@ -82,11 +84,11 @@ screen.key ['r'], (ch, key) ->
 box.focus()
 
 setInterval ->
-  box.style.bg =
-    if box.style.bg is 'green' then 'magenta' else 'green'
+  #box.style.bg =
+    #if box.style.bg is 'green' then 'magenta' else 'green'
 
   screen.render()
-,100
+,500
 
 screen.render()
 
