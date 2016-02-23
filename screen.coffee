@@ -56,7 +56,10 @@ Screen = (client) ->
     box.insertLine(1, 'foo')
     screen.render()
 
-  screen.key ['escape', 'q', 'C-c'], (ch, key) -> screen.destroy()
+  screen.key ['escape', 'q', 'C-c'], (ch, key) ->
+    screen.destroy()
+    unless client?
+      process.exit(0)
 
   mapStepSize = 10
   walk = (wat, huh, where) ->

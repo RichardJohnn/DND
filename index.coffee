@@ -1,4 +1,7 @@
-Server  = require './telnetServer.coffee'
+arg = process.argv[2]
 
-Server()
+if arg is 'server'
+  require('./telnetServer.coffee')()
+else
+  screen = require('./screen.coffee')()
 

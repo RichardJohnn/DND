@@ -27,8 +27,6 @@ Server = ->
       unless screen.destroyed
         screen.destroy()
 
-    screen.render()
-
   server.listen(2300)
   console.log('Listening on 2300...')
 
