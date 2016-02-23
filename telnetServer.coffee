@@ -15,7 +15,6 @@ Server = ->
       console.error(msg)
 
     client.on 'term', (terminal) ->
-      console.log "TERM"
       screen.terminal = terminal
       screen.render()
 
