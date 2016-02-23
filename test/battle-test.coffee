@@ -12,6 +12,7 @@ describe 'Battle', ->
       {team:2, name:'Suge Knight'}
       {team:2, name:'Yaki Kadafi'}
     ]
+
   describe 'sides', ->
     it 'should group sides by a sideIdentifier', ->
       sideIdentifier = 'team'
