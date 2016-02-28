@@ -31,20 +31,25 @@ Screen = (client) ->
 
   screen.append box
 
-  testTube = __dirname + '/lib/assets/icon_science.png'
-  troll    = __dirname + '/lib/assets/internet-troll.jpg'
-  werewolf = __dirname + '/lib/assets/werewolf.png'
-  map      = __dirname + '/lib/assets/elevation.png'
-  bigmap   = __dirname + '/lib/assets/worldgenerator/seed_33484_elevation.png'
+  assets = __dirname + '../assets/'
 
-  file = bigmap
+  testTube = assets + 'icon_science.png'
+  troll    = assets + 'internet-troll.jpg'
+  werewolf = assets + 'werewolf.png'
+  map      = assets + 'worldgenerator/Cyriev_elevation.png'
+
+  console.log map
+
+  file = map
   icon = blessed.image
-    parent: box
-    top: -300
-    left: -300
+    parent: screen
+    top: 0
+    left: 0
     type: 'ansi'
     file: file
     search: false
+
+  console.log icon.scale
 
   box.on 'click', (data) ->
     box.setContent('{center}Some different {red-fg}content{/red-fg}.{/center}')
@@ -76,14 +81,14 @@ Screen = (client) ->
   mapScale = 1
 
   screen.key ['m'], (ch, key) ->
-    icon.width = icon.height = "100%"
-    icon.scale = mapScale
-    icon.setImage(bigmap)
+    #icon.width = icon.height = "100%"
+    #icon.scale = mapScale
+    icon.setImage(map)
 
   screen.key ['r'], (ch, key) ->
-    icon.width = icon.height = '10%'
-    icon.scale = 1
-    icon.parent = box
+    #icon.width = icon.height = '100%'
+    #icon.scale = 1
+    #icon.parent = box
     icon.setImage(if icon.file is werewolf then troll else werewolf)
 
   box.focus()
