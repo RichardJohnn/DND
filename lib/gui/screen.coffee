@@ -1,65 +1,21 @@
 blessed = require 'blessed'
 _       = require 'lodash'
+Map     = require './map'
 
 Screen = (client) ->
   screen = blessed.screen
+    title: 'DND'
     smartCSR: true
     input: client
     output: client
     terminal: 'xterm-256color'
     fullUnicode: true
 
-  screen.title = "DND"
+  map = Map(screen)
+  icon = map.icon
+  box = map.box
 
-  box = blessed.box {
-    top: 'center'
-    left: 'center'
-    width: '50%'
-    height: '50%'
-    content: 'Hello {bold}WORLD{/bold}'
-    tags: true
-    border:
-      type: 'line'
-    style:
-      fg: 'white'
-      bg: 'magenta'
-      border:
-        fg: '#f0f0f0'
-      hover:
-        bg: 'green'
-  }
-
-  screen.append box
-
-  assets = __dirname + '../assets/'
-
-  testTube = assets + 'icon_science.png'
-  troll    = assets + 'internet-troll.jpg'
-  werewolf = assets + 'werewolf.png'
-  map      = assets + 'worldgenerator/Cyriev_elevation.png'
-
-  console.log map
-
-  file = map
-  icon = blessed.image
-    parent: screen
-    top: 0
-    left: 0
-    type: 'ansi'
-    file: file
-    search: false
-
-  console.log icon.scale
-
-  box.on 'click', (data) ->
-    box.setContent('{center}Some different {red-fg}content{/red-fg}.{/center}')
-    screen.render()
-
-  box.key 'enter', (ch, key) ->
-    box.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n')
-    box.setLine(1, 'bar')
-    box.insertLine(1, 'foo')
-    screen.render()
+  screen.append map.box
 
   screen.key ['escape', 'q', 'C-c'], (ch, key) ->
     screen.destroy()
@@ -81,26 +37,16 @@ Screen = (client) ->
   mapScale = 1
 
   screen.key ['m'], (ch, key) ->
-    #icon.width = icon.height = "100%"
-    #icon.scale = mapScale
-    icon.setImage(map)
+    map.show()
 
   screen.key ['r'], (ch, key) ->
-    #icon.width = icon.height = '100%'
-    #icon.scale = 1
-    #icon.parent = box
-    icon.setImage(if icon.file is werewolf then troll else werewolf)
+    map.hide()
 
   box.focus()
 
   setInterval ->
-      #box.style.bg =
-        #if box.style.bg is 'green' then 'magenta' else 'green'
-
-      screen.render()
+    screen.render()
   ,100
-
-  screen.data.main = box
 
   return screen
 
