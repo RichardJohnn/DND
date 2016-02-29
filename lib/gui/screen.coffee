@@ -31,10 +31,8 @@ Screen = (client) ->
 
   screen.key ['j'], (ch, key) -> walkDatIcon('top',  -1 * mapStepSize)
   screen.key ['k'], (ch, key) -> walkDatIcon('top',  mapStepSize)
-  screen.key ['l'], (ch, key) -> walkDatIcon('left', -1 * mapStepSize)
-  screen.key ['h'], (ch, key) -> walkDatIcon('left', mapStepSize)
-
-  mapScale = 1
+  screen.key ['h'], (ch, key) -> walkDatIcon('left', -1 * mapStepSize)
+  screen.key ['l'], (ch, key) -> walkDatIcon('left', mapStepSize)
 
   screen.key ['m'], (ch, key) ->
     map.show()
