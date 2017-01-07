@@ -34,3 +34,4 @@ node_modules
 
 #game assets
 lib/assets
+stanford-corenlp-full-2015-12-09/*

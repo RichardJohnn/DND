@@ -1,18 +1,17 @@
-
 blessed = require 'blessed'
 _       = require 'lodash'
 
 Repl = (screen) ->
-  blessed.terminal({
+  term = blessed.terminal({
     parent: screen,
     cursor: 'line',
     cursorBlink: true,
     screenKeys: false,
-    label: ' multiplex.js ',
+    label: ' repl ',
     left: 0,
-    top: 0,
-    width: '50%',
-    height: '50%',
+    bottom: 0,
+    width: '100%',
+    height: '20%',
     border: 'line',
     style: {
       fg: 'default',
@@ -24,5 +23,10 @@ Repl = (screen) ->
       }
     }
   })
+
+  term.pty.on 'data', (data) ->
+    screen.log(JSON.stringify(data))
+
+  term
 
 module.exports = Repl
