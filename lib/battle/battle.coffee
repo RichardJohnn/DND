@@ -52,7 +52,7 @@ class Battle
 
   pointer: 0
 
-  currentActor: -> @order[pointer]
+  currentActor: -> @order()[@pointer]
 
   step: () ->
     pointer =
@@ -63,7 +63,20 @@ class Battle
 
     @pointer = pointer
 
-  run: () ->
+  run: (cb) ->
+    while !@done
+      @step()
+      console.log @order()
+      console.log @pointer
+      console.log @currentActor()
+
+      if @sides[0].dead or @side[1].dead
+        @done = true
+
+      @done = true
+
+    result = _.find @sides, ['dead', true]
+
 
 module.exports = Battle
 

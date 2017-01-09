@@ -1,5 +1,5 @@
 expect = require('chai').expect
-container = require '../deps'
+container = require '../../deps'
 
 describe 'Name Generator', ->
   beforeEach ->

@@ -50,7 +50,7 @@ describe 'Battle', ->
       repeated = @battle.repeatTilLength([1,2,3], 5)
       expect(repeated).to.deep.equal [1,2,3,1,2]
 
-    it 'lops off the end if the array is already longter than target length', ->
+    it 'lops off the end if the array is already longer than target length', ->
       repeated = @battle.repeatTilLength([1,2,3], 2)
       expect(repeated).to.deep.equal [1,2]
 
@@ -66,5 +66,14 @@ describe 'Battle', ->
       _.times(lengthOfActors - 1, @battle.step)
 
       expect(startingPosition).to.equal secondPosition - 1
+
+  describe "#run", ->
+    it "initiates fighting until one team is dead or left or surrendered", ->
+      @battle.run (result) =>
+        expect(result).to.exist
+        expect(result.winner).to.exist
+        expect(result.cause).to.equal 'destruction'
+        expect(@battle.done).to.be.true
+
 
 
