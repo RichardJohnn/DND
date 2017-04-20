@@ -1,8 +1,10 @@
 #include <ncurses.h>
 #include <unistd.h>
+#include "map.c"
 
 int main(int argc, char *argv[]){
   int x, y, max_x, max_y = 0;
+
 
   WINDOW *w = initscr();
   cbreak();
@@ -13,6 +15,8 @@ int main(int argc, char *argv[]){
 
   getmaxyx(stdscr, max_y, max_x);
 
+  Map m = makeMap(max_x,max_y);
+  
   x = max_x / 2;
   y = max_y / 2;
 
