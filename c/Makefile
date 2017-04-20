@@ -1,3 +1,4 @@
+COMPILER = c99
 CFLAGS = -g -std=c99 -Wall
 LDFLAGS = -lncurses
 
@@ -8,10 +9,10 @@ SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
 all: $(OBJS)
-	gcc $(CFLAGS) wat.c -o wat $(LDFLAGS)
+	$(COMPILER) $(CFLAGS) wat.c -o wat $(LDFLAGS)
 
 test: $(OBJS)
-	cc99 $(CFLAGS) test.c -o test $(LDFLAGS)
+	$(COMPILER) $(CFLAGS) test.c -o test $(LDFLAGS)
 
 clean:
 	rm *.exe
