@@ -1,22 +1,66 @@
 _ = require 'lodash'
+{ EventEmitter } = require 'events'
 
 class Character
-  name: ''
-  position: null
-  inventory: []
+  constructor: ->
+    @name      = ''
+    @char      = '@'
+    @color     = 0
+    @x  = 0
+    @y  = 0
+    @inventory = [char: 'Z']
 
-  strength:      0
-  dexterity:     0
-  intelligence:  0
-  constitution:  0
-  widsom:        0
-  charisma:      0
+    @strength     = 0
+    @dexterity    = 0
+    @intelligence = 0
+    @constitution = 0
+    @widsom       = 0
+    @charisma     = 0
 
-  body: null
+    @body = null
 
-  hp: 0
+    @hp = 0
+
+  emitter: new EventEmitter()
+
+  emit: ->
+    @emitter.emit(arguments...)
 
   dead: -> @hp <= 0
+
+  die: ->
+    @hp = 0
+    @char = 'X'
+
+  up: ->
+    @emit 'intent',
+      source:    this
+      update:    => @y--
+
+  down: ->
+    @emit 'intent',
+      source:    this
+      update:    => @y++
+
+  left: ->
+    @emit 'intent',
+      source:    this
+      update:    => @x--
+
+  right: ->
+    @emit 'intent',
+      source:    this
+      update:    => @x++
+
+  shit: ->
+
+  pickup: (item) ->
+    @emit 'pickup',
+      source: this
+
+  drop: (item) ->
+    @emit 'drop',
+      source: this
 
   act: ->
     action = {}

@@ -12,9 +12,10 @@ Screen = (client) ->
     terminal: 'xterm-256color'
     fullUnicode: true
 
-  map = Map(screen)
-  icon = map.icon
-  box = map.box
+  map   = Map(screen)
+  image = map.image
+  show  = map.show
+  box   = map.box
 
   screen.append map.box
 
@@ -28,16 +29,21 @@ Screen = (client) ->
 
   mapStepSizeX  = 50
   mapStepSizeY = 20
-  walk = (wat, huh, where) ->
-    wat[huh] += where
+  walk = (obj, prop, val) ->
+    obj[prop] += val
+    screen.render()
     #file = if Math.random() > .5 then '' else '2'
     #player.play("./lib/assets/sound/steps#{file}.wav", 5)
-  walkDatIcon = _.partial(walk, icon)
+  moveImage = _.partial(walk, image)
 
-  #screen.key ['j'], (ch, key) -> walkDatIcon('top',  -1 * mapStepSizeY)
-  #screen.key ['k'], (ch, key) -> walkDatIcon('top',  mapStepSizeY)
-  #screen.key ['l'], (ch, key) -> walkDatIcon('left', -1 * mapStepSizeX)
-  #screen.key ['h'], (ch, key) -> walkDatIcon('left', mapStepSizeX)
+  #moveImage = (prop, val) ->
+    #show(prop, val)
+    #screen.render()
+
+  screen.key ['j'], (ch, key) -> moveImage('top',  -1 * mapStepSizeY)
+  screen.key ['k'], (ch, key) -> moveImage('top',  mapStepSizeY)
+  screen.key ['l'], (ch, key) -> moveImage('left', -1 * mapStepSizeX)
+  screen.key ['h'], (ch, key) -> moveImage('left', mapStepSizeX)
 
   mapScale = 1
 
@@ -48,10 +54,6 @@ Screen = (client) ->
     #map.hide()
 
   box.focus()
-
-  setInterval ->
-    screen.render()
-  ,100
 
   return screen
 
