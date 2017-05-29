@@ -33,10 +33,11 @@
     "pathfinding": "^0.4.18",
     "play-sound": "0.0.7",
     "pty.js": "^0.3.1",
+    "python-shell": "^0.4.0",
     "sfx": "^0.1.1",
     "telnet2": "0.0.1",
     "term.js": "0.0.7",
-    "terminal-kit": "^0.26.1"
+    "terminal-kit": "^1.8.12"
   },
   "devDependencies": {
     "chai": "^3.5.0",
