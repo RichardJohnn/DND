@@ -5,5 +5,5 @@ module.exports = ({_}) ->
     {x, y, inventory} = character
     {items}           = blocks[x][y]
 
-    if _.some items
-      inventory.push(items.pop())
+    if _.some inventory
+      items.push(inventory.pop())

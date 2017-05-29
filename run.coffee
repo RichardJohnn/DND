@@ -1,5 +1,10 @@
-_  = require 'lodash'
-{ Character, PickupHandler } = require './deps'
+{
+  Character
+  PickupHandler
+  MovementHandler
+  DropHandler
+  _
+} = require './deps'
 
 term = require('terminal-kit').terminal
 term.grabInput( { mouse: 'button' , focus: true } )
@@ -16,37 +21,20 @@ character.y = 20
 
 randomLevel = new RandomLevel({sizeX: 80, sizeY: 40})
 
-PickupHandler = _(new PickupHandler.instance)
-  .bind(this)
-  .partial(randomLevel)
-  .value()
-
 blocks = randomLevel.blocks
 blocks[character.x][character.y].inhabitants.push character
 
-character.emitter.on 'intent', (event) ->
-  character = event.source
-  currentBlock = randomLevel.blocks[character.x][character.y]
-  _.pull(currentBlock.inhabitants, character)
+ShowScreen(randomLevel.blocks)
 
-  event.update()
+MovementHandler = _.partial(new MovementHandler.instance, randomLevel)
+character.emitter.on 'intent', MovementHandler
+character.emitter.on 'intent', -> ShowScreen(randomLevel.blocks)
 
-  currentBlock = randomLevel.blocks[character.x][character.y]
-  currentBlock.inhabitants.push character
-
-  #ShowScreen(randomLevel.blocks)
-
+PickupHandler = _.partial(new PickupHandler.instance, randomLevel)
 character.emitter.on 'pickup', PickupHandler
+character.emitter.on 'pickup', -> ShowScreen(randomLevel.blocks)
 
-character.emitter.on 'drop', ({source}) ->
-  character = source
-  currentBlock = randomLevel.blocks[character.x][character.y]
-  {inventory} = character
-  if _.some inventory
-    currentBlock.items.push(inventory.pop())
-    ShowScreen(randomLevel.blocks)
-
-
-#ShowScreen(randomLevel.blocks)
-
+DropHandler = _.partial(new DropHandler.instance, randomLevel)
+character.emitter.on 'drop', DropHandler
+character.emitter.on 'drop', -> ShowScreen(randomLevel.blocks)
 
