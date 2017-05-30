@@ -24,6 +24,16 @@ randomLevel = new RandomLevel({sizeX: 80, sizeY: 40})
 blocks = randomLevel.blocks
 blocks[character.x][character.y].inhabitants.push character
 
+term.on 'key', ( key , matches , data ) ->
+  if key is 't'
+    term
+      .moveTo(blocks.length + 1, 0)
+      .white('>>>')
+      .inputField(
+        #{ history: history , autoComplete: autoComplete , autoCompleteMenu: true } ,
+        ( error, input ) ->
+      )
+
 ShowScreen(randomLevel.blocks)
 
 MovementHandler = _.partial(new MovementHandler.instance, randomLevel)
