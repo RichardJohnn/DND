@@ -7,3 +7,4 @@ module.exports = ({_}) ->
 
     if _.some items
       inventory.push(items.pop())
+      blocks[x][y].dirty = true
