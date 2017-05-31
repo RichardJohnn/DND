@@ -1,5 +1,6 @@
 module.exports = ({_}) ->
-  ({blocks}, {source}) ->
+  (level, {source}) ->
+    {blocks}  = level
     character = source
 
     {x, y, inventory} = character
@@ -8,3 +9,6 @@ module.exports = ({_}) ->
     if _.some inventory
       items.push(inventory.pop())
       blocks[x][y].dirty = true
+
+    level
+
