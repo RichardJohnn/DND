@@ -1,4 +1,5 @@
 {
+  compose
   Character
   PickupHandler
   MovementHandler
@@ -34,19 +35,16 @@ term.on 'key', ( key , matches , data ) ->
         ( error, input ) ->
       )
 
-ShowScreen(randomLevel.blocks)
+ShowScreen(randomLevel)
 
 MovementHandler = _.partial(new MovementHandler.instance, randomLevel)
-character.emitter.on 'intent', MovementHandler
-character.emitter.on 'intent', -> ShowScreen(randomLevel.blocks)
+character.emitter.on 'intent', compose(ShowScreen, MovementHandler)
 
 PickupHandler = _.partial(new PickupHandler.instance, randomLevel)
-character.emitter.on 'pickup', PickupHandler
-character.emitter.on 'pickup', -> ShowScreen(randomLevel.blocks)
+character.emitter.on 'pickup', compose(ShowScreen, PickupHandler)
 
 DropHandler = _.partial(new DropHandler.instance, randomLevel)
-character.emitter.on 'drop', DropHandler
-character.emitter.on 'drop', -> ShowScreen(randomLevel.blocks)
+character.emitter.on 'drop', compose(ShowScreen, DropHandler)
 
 #term.drawImage(
   #'http://www.asergeev.com/pictures/archives/2014/1438/jpeg/09.jpg',

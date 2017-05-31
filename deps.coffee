@@ -2,6 +2,7 @@ Bottle = require 'bottlejs'
 bottle = new Bottle()
 
 bottle.value '_',                       require('lodash')
+bottle.value 'compose',                 require('lodash/fp/compose')
 bottle.value 'PersonalityTraits',       require('./lib/assets/personalityTraits')
 
 bottle.service 'DescriptionGenerator',  require('./lib/character/description-generator'),  'PersonalityTraits'

@@ -1,15 +1,17 @@
 BGCOLOR = -1
 COLOR   = -1
 
-module.exports = (term, matrix) ->
+module.exports = (term, level) ->
   #term.clear()
+
+  {blocks} = level
 
   term.hideCursor()
 
-  rowCount = matrix.length
-  colCount = matrix[0].length
+  rowCount = blocks.length
+  colCount = blocks[0].length
 
-  matrix.map (row, x) ->
+  blocks.map (row, x) ->
     row.map (block, y) ->
       return unless block.dirty
       block.dirty = false
@@ -32,7 +34,9 @@ module.exports = (term, matrix) ->
       term.bgColor256(bgcolor)
       term.moveTo(x, y, char)
 
-  term.moveTo(matrix.length, matrix[0].length)
+  term.moveTo(blocks.length, blocks[0].length)
   #term.bgColor256(0)
   term('\n')
+
+  level
 

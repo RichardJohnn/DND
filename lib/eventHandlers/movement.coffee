@@ -11,3 +11,5 @@ module.exports = ({_}) ->
     currentBlock = level.blocks[character.x][character.y]
     currentBlock.inhabitants.push character
     currentBlock.dirty = true
+
+    level
