@@ -1,13 +1,15 @@
-fs = require 'fs'
-join = require('path').join
+fs       = require 'fs'
+join     = require('path').join
 ProtoBuf = require 'protobufjs'
 
 _worldProto = ->
-  builder = ProtoBuf.loadProtoFile(join(__dirname, "World.proto"))
+  path = join(__dirname, "World.proto")
+  builder = ProtoBuf.loadProtoFile(path)
   builder.build("World").World
 
-worldReader = (_path) ->
-  file = fs.readFileSync(_path)
+worldReader = () ->
+  path = join(__dirname, '../assets/worldgenerator/Cyriev.world')
+  file = fs.readFileSync(path)
   _worldProto().decode(file)
 
 module.exports = worldReader

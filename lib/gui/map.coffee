@@ -35,8 +35,9 @@ Map = (screen) ->
     screen.render()
 
   map = join(__dirname, '../assets/worldgenerator/Cyriev_elevation.png')
+  #map = join(__dirname, '~/1_1_3.tga')
 
-  icon = blessed.image
+  image = blessed.image
     parent: box
     top: 0
     left: 0
@@ -45,13 +46,13 @@ Map = (screen) ->
     search: false
 
   {
-    show: ->
-      icon.setImage(map)
+    show: (prop, val) ->
+      image.setImage(map)
     hide: ->
-      icon.clearImage()
+      image.clearImage()
 
     box: box
-    icon: icon
+    image: image
   }
 
 module.exports = Map

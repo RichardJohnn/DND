@@ -6,7 +6,7 @@ clean:
 	rm -rf ./node_modules
 
 test:
-	@NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter $(REPORTER) --timeout 3000
+	@NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter $(REPORTER) --timeout 11000
 
 coffee-jshint:
 	coffee-jshint lib examples test index.coffee
