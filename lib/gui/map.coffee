@@ -19,11 +19,17 @@ Map = (screen) ->
   }
 
   box.on 'click', (data) ->
-    box.setContent('{center}Some different {red-fg}content{/red-fg}.{/center}')
+    box.setContent("""
+      {center}
+        Some different {red-fg}content{/red-fg}.
+      {/center}""")
     screen.render()
 
   box.key 'enter', (ch, key) ->
-    box.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n')
+    box.setContent("""
+    {right}
+      Even different {black-fg}content{/black-fg}.
+    {/right}\n""")
     box.setLine(1, 'bar')
     box.insertLine(1, 'foo')
     screen.render()
