@@ -2,11 +2,14 @@
 #include <unistd.h>
 #include "map.c"
 
+#define ESCAPE 27
+
 int main(int argc, char *argv[]){
   int x, y, max_x, max_y = 0;
 
-
   WINDOW *w = initscr();
+  start_color();
+  init_pair(1, COLOR_RED, COLOR_WHITE);
   cbreak();
   keypad(stdscr, TRUE);
   nodelay(w, TRUE);
@@ -16,7 +19,7 @@ int main(int argc, char *argv[]){
   getmaxyx(stdscr, max_y, max_x);
 
   Map m = makeMap(max_x,max_y);
-  
+
   x = max_x / 2;
   y = max_y / 2;
 
@@ -33,7 +36,7 @@ int main(int argc, char *argv[]){
     if (ch != -1)
       lastCh = ch;
 
-    if (ch == 27) break;
+    if (ch == ESCAPE) break;
     switch(ch){
       case 2:
         y++;
@@ -53,9 +56,9 @@ int main(int argc, char *argv[]){
         continue;
     }
 
+    drawMap(m);
     mvprintw(max_y - 1, 0, "%d", lastCh);
     mvprintw(y, x, "@");
-
     refresh();
     usleep(35000);
   }
