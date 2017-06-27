@@ -5,18 +5,8 @@
     )
   )
 
-(def mongoose (nodejs/require "mongoose"))
-(.connect mongoose "mongodb://localhost/test")
-(defonce Cat (.model mongoose "cat" #js {:name js/String}))
-
-(defn crap []
-  (let [kitty (Cat. #js {:name "Interesting" :size 200 })
-        promise (.save kitty)]
-    (.then promise (fn [& args]
-                     (println args)))))
-
 (nodejs/enable-util-print!)
 
-(defn -main [] (show/demo))
+(defn -main [] nil)
 
 (set! *main-cli-fn* -main)
