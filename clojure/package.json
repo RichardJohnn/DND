@@ -1,0 +1,17 @@
+{
+  "name": "hello-world",
+  "version": "0.1.0",
+  "private": "true",
+  "engines": {
+    "node": "0.12.x"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "moongoose": "0.0.5",
+    "terminal-kit": "^1.10.2"
+  },
+  "devDependencies": {
+    "source-map-support": "0.4.0",
+    "ws": "0.8.1"
+  }
+}
