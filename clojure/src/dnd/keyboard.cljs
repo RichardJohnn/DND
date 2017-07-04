@@ -1,28 +1,25 @@
 (ns dnd.keyboard
-  (:require [cljs.nodejs :as js]))
+  (:require [cljs.nodejs :as nodejs]))
 
-(defn print-ret [& args]
-  (do
-    (println args)
-    args))
-
-(def events (js/require "events"))
+(def events (nodejs/require "events"))
 (def emitter (new events.EventEmitter))
-(def emit (.-emit emitter))
+(defn emit [& args] (.emit emitter args))
 
-(defn keyHandler [key matches data]
+(defn keyHandler [level character key matches data]
+  (println key)
   (case key
-    "UP"    (emit "up" )
-    "DOWN"  (emit "down")
-    "LEFT"  (emit "left")
-    "RIGHT" (emit "right")
-    "g"     (emit "get")
-    "d"     (emit "drop")
+    "UP"    (emit "up" level character)
+    "DOWN"  (emit "down" level character)
+    "LEFT"  (emit "left" level character)
+    "RIGHT" (emit "right" level character)
+    "g"     (emit "get" level character)
+    "d"     (emit "drop" level character)
     "ESCAPE" (.exit js/process)
     "default"))
 
-(defn HandleCharacterKeys [term character]
-  (.on term "key" keyHandler))
+(defn HandleCharacterKeys [term level character]
+  (let [handler (partial keyHandler level character)]
+    (.on term "key" handler)))
 
 (defn RemoveHandleCharacterKeys [term]
  (.off term "key" keyHandler))

@@ -2,6 +2,7 @@
   (:require
     [ cljs.nodejs :as nodejs ]
     [ dnd.level :as level ]
+    [ dnd.character ]
     [ dnd.show-screen :as show ]
     [ dnd.keyboard :as keyboard ]
     ))
@@ -11,29 +12,33 @@
 (def term
   (.-terminal (nodejs/require "terminal-kit")))
 
-(defn setup []
+(defn setup [term]
   (do
     (.applicationKeypad term)
     (.hideCursor term)
-    (.grabInput term #js { :mouse 'button' :focus true })))
+    (.grabInput term #js { :mouse "button" :focus true })
+    ))
 
-(defn teardown [])
-
+(defn teardown [term]
+  (.removeAllListeners term "key"))
 
 (defn -main []
+  (def character dnd.character/character)
   (.clear term)
-  (teardown)
-  (setup)
+  (teardown term)
+  (setup term)
+
   (def level
     (let [level (level/make-level)
           firstOne (level 1)
-          updateHabs #(assoc firstOne :inhabitants ["shit"])
+          updateHabs #(assoc firstOne :inhabitants [character])
           updated (update level 1 updateHabs)
           ]
-      updated
-      ))
-  (show/show-screen term level)
-)
+      updated))
+
+  (keyboard/HandleCharacterKeys term level character)
+  (.on keyboard/emitter "up" #(println "UP!!!!!!!!!!!"))
+  (show/show-screen term level))
 
 (set! *main-cli-fn* -main)
 
