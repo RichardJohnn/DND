@@ -1,4 +1,4 @@
-(defproject hello-world "0.1.0-SNAPSHOT"
+(defproject dnd "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
 
@@ -21,8 +21,8 @@
               :source-paths ["src"]
               :figwheel true
               :compiler {
-                :main hello-world.core
-                :output-to "target/server_dev/hello_world.js"
+                :main dnd.core
+                :output-to "target/server_dev/dnd.js"
                 :output-dir "target/server_dev"
                 :target :nodejs
                 :asset-path "target/server_dev"
