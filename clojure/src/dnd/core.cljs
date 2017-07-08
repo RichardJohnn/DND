@@ -20,7 +20,8 @@
     ))
 
 (defn teardown [term]
-  (.removeAllListeners term "key"))
+  (.removeAllListeners term "key")
+  (.removeAllListeners keyboard/emitter))
 
 (defn -main []
   (def character dnd.character/character)
