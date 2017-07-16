@@ -2,8 +2,8 @@
   (:require
     [ cljs.nodejs :as nodejs ]
     [ dnd.level :as level ]
-    [ dnd.character ]
-    [ dnd.show-screen :as show ]
+    [ dnd.character :as character]
+    [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     ))
 
@@ -23,22 +23,26 @@
   (.removeAllListeners term "key")
   (.removeAllListeners keyboard/emitter))
 
+(def character character/character)
+
+(def level
+  (let [level (level/make-level)
+        [updated] (character/move-character level character 2 1)]
+    updated))
+
+(defn move-handler []
+  (let [[level character] (character/move-character level character 0 (inc (character :x)))]
+    ;(set! level level)
+    ;(set! character character)
+    (show/show-screen term level)))
+
 (defn -main []
-  (def character dnd.character/character)
   (.clear term)
   (teardown term)
   (setup term)
 
-  (def level
-    (let [level (level/make-level)
-          firstOne (level 1)
-          updateHabs #(assoc firstOne :inhabitants [character])
-          updated (update level 1 updateHabs)
-          ]
-      updated))
-
   (keyboard/HandleCharacterKeys term level character)
-  (.on keyboard/emitter "up" #(println "UP!!!!!!!!!!!"))
+  (.on keyboard/emitter "up" move-handler)
   (show/show-screen term level))
 
 (set! *main-cli-fn* -main)
