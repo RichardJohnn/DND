@@ -1,4 +1,4 @@
-(ns dnd.show-screen
+(ns dnd.showScreen
   (:require [cljs.nodejs :as nodejs]))
 
 (defn draw-block [term block]
@@ -11,6 +11,10 @@
     (.bgColor256  term bgcolor)
     (.moveTo      term x y char)))
 
+(defn doall* [s] (dorun (tree-seq seq? seq s)) s)
+
 (defn show-screen [term level]
-  (doall (map #(draw-block term %) level)))
+  (doall* (map (fn [row]
+                (map #(draw-block term %) row))
+              level)))
 
