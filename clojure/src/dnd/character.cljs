@@ -19,9 +19,7 @@
         target-inhabitants (:inhabitants target-block)
         updated-character (assoc character :x dx :y dy)
         update-habs #(assoc % :inhabitants (conj target-inhabitants character))
-        updated-level (apply update-in (conj get-new-block update-habs))
-        ]
-    [updated-level updated-character]
-    ))
+        updated-level (apply update-in (conj get-new-block update-habs))]
+    [updated-level updated-character]))
 
 
