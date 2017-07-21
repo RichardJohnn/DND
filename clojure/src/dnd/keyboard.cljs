@@ -10,10 +10,10 @@
 
 (defn keyHandler [level character key matches data]
   (case key
-    "UP"    (emit "up"    level character)
-    "DOWN"  (emit "down"  level character)
-    "LEFT"  (emit "left"  level character)
-    "RIGHT" (emit "right" level character)
+    "UP"    (emit "move"  level character  0 -1)
+    "DOWN"  (emit "move"  level character  0  1)
+    "LEFT"  (emit "move"  level character -1  0)
+    "RIGHT" (emit "move"  level character  1  0)
     "g"     (emit "get"   level character)
     "d"     (emit "drop"  level character)
     "ESCAPE" (.exit js/process)

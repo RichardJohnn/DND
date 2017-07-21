@@ -8,7 +8,7 @@
             })
 
 (def width  20)
-(def height 5)
+(def height 10)
 
 (defn make-block [x y]
   (let [solid (> (rand) 0.9)]
