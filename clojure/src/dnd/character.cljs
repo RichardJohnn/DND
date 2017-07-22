@@ -1,25 +1,22 @@
 (ns dnd.character)
 
-(def character {:char "@"
-                :x 1
-                :y 2
-                :inventory [] })
+(defonce character {:char "@"
+                    :x 3
+                    :y 2
+                    :inventory [] })
 
-(defn move-character [level character dx dy]
-  (let [{ox :x oy :y} character
-        get-old-block [level [ox oy]]
-        old-block (apply get-in get-old-block)
+(defn move-character! [level character dx dy]
+  (let [{ox :x oy :y} @character
+        old-block (get-in @level [ox oy])
         old-inhabitants (:inhabitants old-block)
-        remove-character (fn [old-block] (assoc old-block :inhabitants (vec (remove #(= "@" (:char %)) old-inhabitants))))
-        level-without-char (apply update-in (conj get-old-block remove-character))
-
-        level level-without-char
-        get-new-block [level [dx dy]]
-        target-block (apply get-in get-new-block)
+        is-character (fn [inhabitant] (= "@" (:char inhabitant)))
+        remove-character #(assoc % :inhabitants (remove is-character old-inhabitants))
+        level-without-character (swap! level update-in [ox oy] remove-character)
+        target-block (get-in level-without-character [dx dy])
         target-inhabitants (:inhabitants target-block)
-        updated-character (assoc character :x dx :y dy)
-        update-habs #(assoc % :inhabitants (conj target-inhabitants character))
-        updated-level (apply update-in (conj get-new-block update-habs))]
-    [updated-level updated-character]))
-
+        updated-character (swap! character assoc :x dx :y dy)
+        update-habs #(assoc % :inhabitants (conj target-inhabitants updated-character))
+        updated-level (swap! level update-in [dx dy] update-habs)
+        ]
+    [level character]))
 

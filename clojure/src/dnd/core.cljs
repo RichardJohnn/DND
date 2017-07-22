@@ -23,30 +23,34 @@
   (.removeAllListeners term "key")
   (.removeAllListeners keyboard/emitter))
 
-(def level
-  (let [character character/character
-        {:keys [x y]} character
-        level (level/make-level)
-        [updated] (character/move-character level character x y)]
-    updated))
+(def character (atom character/character))
+
+(defonce level
+  (let [{:keys [x y]} @character
+        level (atom (level/make-level))
+        [level] (character/move-character! level character x y)]
+    level))
 
 (defn move-handler [level character dx dy]
-  (let [{:keys [x y]} character
+  (let [{:keys [x y]} @character
         new-x (+ x dx)
         new-y (+ y dy)
-        [level character] (character/move-character level character new-x new-y)]
-    (show/show-screen term level)))
+        [_level _character] (character/move-character! level character new-x new-y)]
+    (show/show-screen term @level)
+    ))
 
 (defn -main []
   (.clear term)
   (teardown term)
   (setup term)
 
-  (keyboard/HandleCharacterKeys term level character/character)
+  (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" move-handler)
-  (show/show-screen term level))
+  (show/show-screen term @level)
+  )
 
 (set! *main-cli-fn* -main)
 
 (-main)
+(show/show-screen term @level)
 (.bgColor term 0)

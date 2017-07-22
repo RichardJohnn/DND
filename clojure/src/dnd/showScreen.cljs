@@ -5,7 +5,7 @@
   (let [{:keys [x y solid inhabitants] } block
         hasPlayer (boolean (seq inhabitants))
         color   (if hasPlayer 0 3)
-        bgcolor (if hasPlayer 10 1)
+        bgcolor (if solid 2 10)
         char    (if hasPlayer "@" ".")]
     (.color256    term color)
     (.bgColor256  term bgcolor)
