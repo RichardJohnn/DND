@@ -2,19 +2,18 @@
   (:require [cljs.nodejs :as nodejs]))
 
 (defn draw-block [term block]
-  (let [{:keys [x y solid inhabitants] } block
-        hasPlayer (boolean (seq inhabitants))
-        color   (if hasPlayer 0 3)
-        bgcolor (if solid 2 10)
-        char    (if hasPlayer "@" ".")]
-    (.color256    term color)
+
+  (let [{:keys [x y solid inhabitants color] } block
+        has-inhabitant (boolean (seq inhabitants))
+        fgcolor (or (:color (first inhabitants)) 0)
+        bgcolor (or color (if solid 0 10))
+        char    (if has-inhabitant
+                  (:char (first inhabitants))
+                  (if solid "▒" " "))]
+    (.color256    term fgcolor)
     (.bgColor256  term bgcolor)
     (.moveTo      term x y char)))
 
-(defn doall* [s] (dorun (tree-seq seq? seq s)) s)
-
 (defn show-screen [term level]
-  (doall* (map (fn [row]
-                (map #(draw-block term %) row))
-              level)))
+  (dorun (map #(draw-block term %) (flatten level))))
 
