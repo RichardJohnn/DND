@@ -50,8 +50,7 @@
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" move-handler)
   (.on keyboard/emitter "get" get-handler)
-  (show/show-screen term @level)
-  )
+  (show/show-screen term @level))
 
 (set! *main-cli-fn* -main)
 
