@@ -5,11 +5,12 @@
                     :y 2
                     :inventory [] })
 
+(defn is-character [inhabitant] (= "@" (:char inhabitant)))
+
 (defn move-character! [level character dx dy]
   (let [{ox :x oy :y} @character
         old-block (get-in @level [ox oy])
         old-inhabitants (:inhabitants old-block)
-        is-character (fn [inhabitant] (= "@" (:char inhabitant)))
         remove-character #(assoc % :inhabitants (remove is-character old-inhabitants))
         level-without-character (swap! level update-in [ox oy] remove-character)
         target-block (get-in level-without-character [dx dy])
@@ -20,3 +21,18 @@
         ]
     [level character]))
 
+(defn get-item! [level character]
+  (let [{:keys [x y]} @character
+        block (get-in @level [x y])
+        old-inhabitants (:inhabitants block)
+        gotten-inhabitant (first (remove is-character old-inhabitants))
+
+        inventory (:inventory @character)
+        inventory-length (count inventory)
+        new-inventory (assoc inventory inventory-length gotten-inhabitant)
+        updated-character (swap! character assoc :inventory new-inventory)
+
+        matcher #(= gotten-inhabitant %)
+        remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
+        updated-level (swap! level update-in [x y] remove-inhabitant) ]
+    [level character]))

@@ -36,8 +36,11 @@
         new-x (+ x dx)
         new-y (+ y dy)
         [_level _character] (character/move-character! level character new-x new-y)]
-    (show/show-screen term @level)
-    ))
+    (show/show-screen term @level)))
+
+(defn get-handler [level character]
+  (let [[_level _character] (character/get-item! level character)]
+    (show/show-screen term @level)))
 
 (defn -main []
   (.clear term)
@@ -46,6 +49,7 @@
 
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" move-handler)
+  (.on keyboard/emitter "get" get-handler)
   (show/show-screen term @level)
   )
 
