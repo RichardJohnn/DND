@@ -34,5 +34,22 @@
 
         matcher #(= gotten-inhabitant %)
         remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
-        updated-level (swap! level update-in [x y] remove-inhabitant) ]
+        updated-level (swap! level update-in [x y] remove-inhabitant)]
     [level character]))
+
+(defn pushInhabitant [level x y item]
+  (let [{target-inhabitants :inhabitants} (get-in @level [x y])
+        update-habs #(assoc % :inhabitants (conj target-inhabitants item))
+        updated-level (swap! level update-in [x y] update-habs)
+        ]
+    level))
+
+(defn drop-item! [level character item]
+  (let [{:keys [x y inventory]} @character
+        matcher #(= item %)
+        updated-character (swap! character assoc :inventory (remove matcher inventory))
+        updated-level (pushInhabitant level x y item)
+        ])
+  )
+
+

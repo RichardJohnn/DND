@@ -42,6 +42,11 @@
   (let [[_level _character] (character/get-item! level character)]
     (show/show-screen term @level)))
 
+(defn drop-handler [level character]
+  (let [lastItem (last (:inventory @character))
+        [_level _character] (character/drop-item! level character lastItem)]
+    (show/show-screen term @level)))
+
 (defn -main []
   (.clear term)
   (teardown term)
@@ -50,6 +55,7 @@
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" move-handler)
   (.on keyboard/emitter "get" get-handler)
+  (.on keyboard/emitter "drop" drop-handler)
   (show/show-screen term @level))
 
 (set! *main-cli-fn* -main)
