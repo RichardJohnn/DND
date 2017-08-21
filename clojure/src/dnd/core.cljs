@@ -43,8 +43,8 @@
     (show/show-screen term @level)))
 
 (defn drop-handler [level character]
-  (let [lastItem (last (:inventory @character))
-        [_level _character] (character/drop-item! level character lastItem)]
+  (let [lastItem (last (:inventory @character))]
+    (character/drop-item! level character lastItem)
     (show/show-screen term @level)))
 
 (defn -main []

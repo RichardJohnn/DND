@@ -19,14 +19,20 @@
         updated-level (swap! level update-in [dx dy] update-habs)]
     [level character]))
 
+
+(defn push-inhabitant! [level x y item]
+  (let [{target-inhabitants :inhabitants} (get-in @level [x y])
+        update-habs #(assoc % :inhabitants (conj target-inhabitants item))
+        updated-level (swap! level update-in [x y] update-habs)]
+    level))
+
 (defn get-item! [level character]
   (let [{:keys [x y]} @character
         {old-inhabitants :inhabitants} (get-in @level [x y])
         gotten-inhabitant (first (remove is-character old-inhabitants))
 
         inventory (:inventory @character)
-        inventory-length (count inventory)
-        new-inventory (assoc inventory inventory-length gotten-inhabitant)
+        new-inventory (conj inventory gotten-inhabitant)
         updated-character (swap! character assoc :inventory new-inventory)
 
         matcher #(= gotten-inhabitant %)
@@ -34,19 +40,11 @@
         updated-level (swap! level update-in [x y] remove-inhabitant)]
     [level character]))
 
-(defn pushInhabitant [level x y item]
-  (let [{target-inhabitants :inhabitants} (get-in @level [x y])
-        update-habs #(assoc % :inhabitants (conj target-inhabitants item))
-        updated-level (swap! level update-in [x y] update-habs)
-        ]
-    level))
-
 (defn drop-item! [level character item]
   (let [{:keys [x y inventory]} @character
         matcher #(= item %)
         updated-character (swap! character assoc :inventory (remove matcher inventory))
-        updated-level (pushInhabitant level x y item)
-        ])
-  )
+        updated-level (push-inhabitant! level x y item)
+        ]))
 
 
