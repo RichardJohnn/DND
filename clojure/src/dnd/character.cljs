@@ -1,6 +1,6 @@
 (ns dnd.character)
 
-(defonce character {:char "@"
+(defonce base-character {:char "@"
                     :x 3
                     :y 2
                     :inventory []})

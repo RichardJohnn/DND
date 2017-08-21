@@ -1,6 +1,6 @@
 (ns dnd.level
    (:require
-    [ dnd.character :as character ]))
+    [ dnd.character :refer [base-character]]))
 
 (def block {
             :x 0
@@ -17,7 +17,7 @@
         walkable (not solid)
         has-inhabitant (> (rand) .8)
         inhabitants (if (and (not solid) has-inhabitant)
-                      [(assoc character/character :char "e" :color (rand-int 256))]
+                      [(assoc base-character :char "e" :color (rand-int 256))]
                       [])
         color (if (and walkable (> (rand) 0.9)) 4 2)]
     (assoc block

@@ -23,7 +23,7 @@
   (.removeAllListeners term "key")
   (.removeAllListeners keyboard/emitter))
 
-(def character (atom character/character))
+(def character (atom character/base-character))
 
 (defonce level
   (let [{:keys [x y]} @character
