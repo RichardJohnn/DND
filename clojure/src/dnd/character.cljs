@@ -8,8 +8,8 @@
 (defn is-character [inhabitant] (= "@" (:char inhabitant)))
 
 (defn move-character! [level character dx dy]
-  (let [target-block (get-in @level [dx dy])]
-    (if-let [target-block (not (:solid target-block))]
+  (if-let [target-block (get-in @level [dx dy])]
+    (if-let [not-solid (not (:solid target-block))]
       (let [{ox :x oy :y} @character
             {old-inhabitants :inhabitants} (get-in @level [ox oy])
             remove-character #(assoc % :inhabitants (remove is-character old-inhabitants))
@@ -17,9 +17,10 @@
             target-inhabitants (:inhabitants target-block)
             updated-character (swap! character assoc :x dx :y dy)
             update-habs #(assoc % :inhabitants (conj target-inhabitants updated-character))
-            updated-level (swap! level update-in [dx dy] update-habs)])
-      "can't walk there")
-    [level character]))
+            updated-level (swap! level update-in [dx dy] update-habs)]
+        [level character])
+      "can't walk through solid blocks")
+    "can't walk off the board"))
 
 
 (defn push-inhabitant! [level x y item]
