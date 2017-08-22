@@ -1,11 +1,14 @@
 (ns dnd.core
   (:require
     [ cljs.nodejs :as nodejs ]
+    [ cljs.core.async :refer [chan close! <! timeout] ]
     [ dnd.level :as level ]
     [ dnd.character :as character]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
-    ))
+    )
+  (:require-macros
+    [cljs.core.async.macros :as m :refer [go-loop]]))
 
 (nodejs/enable-util-print!)
 
@@ -47,16 +50,35 @@
     (character/drop-item! level character lastItem)
     (show/show-screen term @level)))
 
+(defn popper [queue]
+  (go-loop [q queue]
+    (if (not (empty? @queue))
+      (let [next-action (peek @queue)]
+        ;(println next-action)
+        (apply move-handler next-action)
+        (swap! queue pop))
+      nil)
+
+    (<! (timeout 100))
+    (recur queue))
+  )
+
 (defn -main []
   (.clear term)
   (teardown term)
   (setup term)
 
+  (def queue (atom #queue []))
+  (defn pusher! [action & arguments] (swap! queue conj arguments))
+
   (keyboard/HandleCharacterKeys term level character)
-  (.on keyboard/emitter "move" move-handler)
-  (.on keyboard/emitter "get" get-handler)
-  (.on keyboard/emitter "drop" drop-handler)
-  (show/show-screen term @level))
+  (.on keyboard/emitter "move" (partial pusher! "move"))
+  (.on keyboard/emitter "get"  (partial pusher! "get"))
+  (.on keyboard/emitter "drop" (partial pusher! "drop"))
+  (show/show-screen term @level)
+  (popper queue)
+  )
+
 
 (set! *main-cli-fn* -main)
 
