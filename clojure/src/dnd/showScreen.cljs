@@ -1,5 +1,7 @@
 (ns dnd.showScreen
-  (:require [cljs.nodejs :as nodejs]))
+  (:require [cljs.nodejs :as nodejs]
+            [dnd.level :refer [width height]]
+            ))
 
 (defn draw-block [term block]
 
@@ -13,7 +15,13 @@
     (.color256    term fgcolor)
     (.bgColor256  term bgcolor)
     (.moveTo      term x y char)))
+(defn show-screen [term level character]
+  (dorun (map #(draw-block term %) (flatten level)))
 
-(defn show-screen [term level]
-  (dorun (map #(draw-block term %) (flatten level))))
+  (.color256    term 7)
+  (.bgColor256  term 0)
+  (.moveTo term (+ 2 width) 0 (str "HP: " (:hp character)))
+  (.moveTo term 0 (inc height) "got some text down below\n\n")
+
+  )
 

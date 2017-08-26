@@ -3,6 +3,7 @@
 (defonce base-character {:char "@"
                          :x 3
                          :y 2
+                         :hp 20
                          :inventory []})
 
 (defn is-character [inhabitant] (= "@" (:char inhabitant)))

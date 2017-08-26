@@ -34,21 +34,23 @@
         [level] (character/move-character! level character x y)]
     level))
 
+(defn show-screen [] (show/show-screen term @level @character))
+
 (defn move-handler [level character dx dy]
   (let [{:keys [x y]} @character
         new-x (+ x dx)
         new-y (+ y dy)
         [_level _character] (character/move-character! level character new-x new-y)]
-    (show/show-screen term @level)))
+    (show-screen)))
 
 (defn get-handler [level character]
   (let [[_level _character] (character/get-item! level character)]
-    (show/show-screen term @level)))
+    (show-screen)))
 
 (defn drop-handler [level character]
   (let [lastItem (last (:inventory @character))]
     (character/drop-item! level character lastItem)
-    (show/show-screen term @level)))
+    (show-screen)))
 
 (defn popper [queue]
   (go-loop [q queue]
@@ -75,13 +77,13 @@
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
-  (show/show-screen term @level)
   (popper queue)
+  (show-screen)
   )
 
 
 (set! *main-cli-fn* -main)
 
 (-main)
-(show/show-screen term @level)
+(show-screen)
 (.bgColor term 0)
