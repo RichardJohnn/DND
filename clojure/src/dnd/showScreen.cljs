@@ -3,18 +3,25 @@
             [dnd.level :refer [width height]]
             ))
 
+(def COLOR
+  (nodejs/require "color"))
+
 (defn draw-block [term block]
 
   (let [{:keys [x y solid inhabitants color] } block
         has-inhabitant (boolean (seq inhabitants))
         fgcolor (or (:color (first inhabitants)) 0)
-        bgcolor (or color (if solid 0 10))
+        bgcolor (or color (if solid
+                            (-> (COLOR "green") (.rbg) (.array))
+                            (-> (COLOR "blue")  (.rbg) (.array))
+                            ))
         char    (if has-inhabitant
                   (:char (first inhabitants))
                   (if solid "▒" " "))]
-    (.color256    term fgcolor)
-    (.bgColor256  term bgcolor)
-    (.moveTo      term x y char)))
+    (.color256      term fgcolor)
+    (.bgColorRgbHex term bgcolor)
+    (.moveTo        term x y char)))
+
 (defn show-screen [term level character]
   (dorun (map #(draw-block term %) (flatten level)))
 
