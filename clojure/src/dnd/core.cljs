@@ -52,12 +52,18 @@
     (character/drop-item! level character lastItem)
     (show-screen)))
 
-(defn popper [queue]
+(defn popper! [queue]
   (go-loop [q queue]
     (if (not (empty? @queue))
-      (let [next-action (peek @queue)]
-        ;(println next-action)
-        (apply move-handler next-action)
+      (let [next-action (peek @queue)
+            action-name (first next-action)
+            args        (rest next-action)
+            function    (case action-name
+                          "move" move-handler
+                          "get"  get-handler
+                          "drop" drop-handler)]
+
+        (apply function args)
         (swap! queue pop))
       nil)
 
@@ -71,19 +77,17 @@
   (setup term)
 
   (def queue (atom #queue []))
-  (defn pusher! [action & arguments] (swap! queue conj arguments))
+  (defn pusher! [& arguments] (swap! queue conj arguments))
 
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
-  (popper queue)
   (show-screen)
+  (popper! queue)
   )
-
 
 (set! *main-cli-fn* -main)
 
 (-main)
 (show-screen)
-(.bgColor term 0)
