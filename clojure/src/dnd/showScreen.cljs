@@ -6,20 +6,25 @@
 (def COLOR
   (nodejs/require "color"))
 
-(defn draw-block [term block]
+(defn color-to-vec [kolor]
+  (-> kolor (.rgb) (.array) (js->clj)))
 
+(defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color] } block
         has-inhabitant (boolean (seq inhabitants))
+        night true
         fgcolor (or (:color (first inhabitants)) 0)
         bgcolor (or color (if solid
-                            (-> (COLOR "green") (.rbg) (.array))
-                            (-> (COLOR "blue")  (.rbg) (.array))
+                            (COLOR "white")
+                            (COLOR "pink")
                             ))
+        bgcolor (if night (.darken bgcolor .9) bgcolor)
+        bgcolor (color-to-vec bgcolor)
         char    (if has-inhabitant
                   (:char (first inhabitants))
                   (if solid "▒" " "))]
     (.color256      term fgcolor)
-    (.bgColorRgbHex term bgcolor)
+    (apply (.-bgColorRgb term) bgcolor)
     (.moveTo        term x y char)))
 
 (defn show-screen [term level character]
