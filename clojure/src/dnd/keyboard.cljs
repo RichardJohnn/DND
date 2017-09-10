@@ -1,9 +1,13 @@
 (ns dnd.keyboard
-  (:require [cljs.nodejs :as nodejs]))
+  (:require
+    [cljs.nodejs :as nodejs]))
 
 (def emitter
   (let [events (nodejs/require "events") ]
     (new events.EventEmitter)))
+
+(def throttle
+  (.-throttle (nodejs/require "lodash")))
 
 (def emit
   (.bind (.-emit emitter) emitter))
@@ -21,7 +25,7 @@
 
 (defn HandleCharacterKeys [term level character]
   (let [handler (partial keyHandler level character)]
-    (.on term "key" handler)))
+    (.on term "key" (throttle handler 100))))
 
 (defn RemoveHandleCharacterKeys [term]
  (.off term "key" keyHandler))
