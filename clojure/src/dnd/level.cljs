@@ -41,8 +41,7 @@
   ([width height]
    (let [one-indexed-range #(map inc (range %))
          row-array (one-indexed-range width)
-         col-array (one-indexed-range height)
-         ]
+         col-array (one-indexed-range height)]
     (vec
       (for [x row-array]
         (vec (map #(make-block x %) col-array)))))))
