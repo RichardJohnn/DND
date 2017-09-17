@@ -40,6 +40,7 @@
   (let [{:keys [x y]} @character
         new-x (+ x dx)
         new-y (+ y dy)
+        _character (character/redirect-character! character dx dy)
         [_level _character] (character/move-character! level character new-x new-y)]
     (show-screen)))
 

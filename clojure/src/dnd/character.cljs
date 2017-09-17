@@ -4,9 +4,18 @@
                          :x 3
                          :y 2
                          :hp 20
-                         :inventory []})
+                         :inventory []
+                         :direction "n" })
 
 (defn is-character [inhabitant] (= "@" (:char inhabitant)))
+
+(defn character-direction [dx dy]
+  (if (= dx 0)
+    (if (= dy 1) "s" "n")
+    (if (= dx 1) "e" "w")))
+
+(defn redirect-character! [character dx dy]
+  (swap! character assoc :direction (character-direction dx dy)))
 
 (defn move-character! [level character dx dy]
   (if-let [target-block (get-in @level [dx dy])]
