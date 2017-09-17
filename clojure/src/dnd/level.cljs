@@ -23,8 +23,8 @@
                       [(assoc base-character :char "e" :color (rand-int 256))]
                       [])
         color (if (and walkable (> (rand) 0.9))
-                (COLOR "green")
                 (COLOR "blue")
+                (COLOR "green")
                 )]
     (assoc block
            :x x
