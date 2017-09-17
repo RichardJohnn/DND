@@ -49,10 +49,9 @@
 
 (defn drop-handler [level character]
   (let [lastItem (last (:inventory @character))]
-    (if-not (nil? lastItem)
-      (do
-        (character/drop-item! level character lastItem)
-        (show-screen)))))
+    (when-not (nil? lastItem)
+      (character/drop-item! level character lastItem)
+      (show-screen))))
 
 (defn popper! [queue]
   (go-loop [q queue]
