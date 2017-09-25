@@ -8,15 +8,13 @@
 
 (defn fov [term level character]
   (let [{:keys [x y direction]} character
-        coords (map js->clj (bresenham #js[x y] #js[2 1]))
-        ]
+        coords (map js->clj (bresenham #js[(inc x) (inc y)] #js[10 10]))]
     (.color256    term 7)
     (.bgColor256  term 0)
-    (dorun (map
-             #(let [[x y] %
-                    y (inc y)]
-                (.moveTo term x y "X")) coords))
-    ))
+    (dorun
+      (map
+        #(let [[x y] % ]
+           (.moveTo term x y "X")) coords))))
 
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color] } block
