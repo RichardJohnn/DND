@@ -1,23 +1,17 @@
 (ns dnd.showScreen
   (:require [cljs.nodejs :as nodejs]
             [dnd.level :refer [width height]]
+            [dnd.color :refer [COLOR color-to-vec]]
             ))
 
-(def COLOR
-  (nodejs/require "color"))
 
-(defn color-to-vec [kolor]
-  (-> kolor (.rgb) (.array) (js->clj)))
 
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color] } block
         has-inhabitant (boolean (seq inhabitants))
         night true
         fgcolor (or (:color (first inhabitants)) 0)
-        bgcolor (or color (if solid
-                            (COLOR "white")
-                            (COLOR "pink")
-                            ))
+        bgcolor (.rgb COLOR color)
         bgcolor (if night (.darken bgcolor .9) bgcolor)
         bgcolor (color-to-vec bgcolor)
         char    (if has-inhabitant

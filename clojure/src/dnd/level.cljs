@@ -1,6 +1,8 @@
 (ns dnd.level
    (:require [cljs.nodejs :as nodejs]
-             [ dnd.character :refer [base-character]]))
+             [dnd.character :refer [base-character]]
+             [dnd.color :refer [color-to-array]]
+             ))
 
 (def COLOR
   (nodejs/require "color"))
@@ -22,10 +24,10 @@
         inhabitants (if (and (not solid) has-inhabitant)
                       [(assoc base-character :char "e" :color (rand-int 256))]
                       [])
-        color (if (and walkable (> (rand) 0.9))
+        color (color-to-array (if (and walkable (> (rand) 0.9))
                 (COLOR "blue")
                 (COLOR "green")
-                )]
+                ))]
     (assoc block
            :x x
            :y y
