@@ -26,7 +26,8 @@
 
   (.color256    term 7)
   (.bgColor256  term 0)
-  (.moveTo term (+ 2 width) 0 (str "HP: " (:hp character)))
+  (.moveTo term (+ 2 width) 1 (str "HP: " (:hp character)))
+  (.moveTo term (+ 2 width) 2 (str "INV: " (count (:inventory character))))
   (.moveTo term 0 (inc height) "got some text down below\n\n")
 
   )
