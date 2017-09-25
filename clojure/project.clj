@@ -11,14 +11,14 @@
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-2"]]
 
-  :source-paths ["src" "src/dev"]
+  :source-paths ["src"]
 
   :clean-targets ["server.js"
                   "target"]
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src" "src/dev"]
+              :source-paths ["src"]
               :figwheel true
               :compiler {
                 :main dnd.core
