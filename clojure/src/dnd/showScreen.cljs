@@ -12,7 +12,10 @@
         ]
     (.color256    term 7)
     (.bgColor256  term 0)
-    (dorun (map #(let [[x y] %] (.moveTo term x y "X")) coords))
+    (dorun (map
+             #(let [[x y] %
+                    y (inc y)]
+                (.moveTo term x y "X")) coords))
     ))
 
 (defn draw-block [term block]
