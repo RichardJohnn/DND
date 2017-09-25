@@ -4,7 +4,16 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
+(def bresenham (nodejs/require "bresenham-js"))
 
+(defn fov [term level character]
+  (let [{:keys [x y direction]} character
+        coords (map js->clj (bresenham #js[x y] #js[2 1]))
+        ]
+    (.color256    term 7)
+    (.bgColor256  term 0)
+    (dorun (map #(let [[x y] %] (.moveTo term x y "X")) coords))
+    ))
 
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color] } block
@@ -23,6 +32,8 @@
 
 (defn show-screen [term level character]
   (dorun (map #(draw-block term %) (flatten level)))
+
+  (fov term level character)
 
   (.color256    term 7)
   (.bgColor256  term 0)

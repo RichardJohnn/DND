@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
+    "bresenham-js": "^0.0.0",
     "color": "^2.0.0",
     "lodash": "^4.17.4",
     "moongoose": "0.0.5",
