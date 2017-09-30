@@ -6,15 +6,35 @@
 
 (def bresenham (nodejs/require "bresenham-js"))
 
+(defn end-points [character]
+  (let [_width (inc width)
+        _height (inc height)]
+    (vec (case (:direction character)
+           "n" (map #(vec [% 0])      (range 0 _width))
+           "s" (map #(vec [% height]) (range 0 _width))
+           "w" (map #(vec [0 %])      (range 0 _height))
+           "e" (map #(vec [width %])  (range 0 _height))))))
+
+(defn draw-x [term coords]
+  (.color256    term 7)
+  (.bgColor256  term 0)
+  (let [[x y] coords]
+     (.moveTo term x y "X")))
+
+(defn draw-line [term line]
+  (run!
+    (partial draw-x term) line))
+
 (defn fov [term level character]
   (let [{:keys [x y direction]} character
-        coords (map js->clj (bresenham #js[(inc x) (inc y)] #js[10 10]))]
-    (.color256    term 7)
-    (.bgColor256  term 0)
-    (dorun
-      (map
-        #(let [[x y] % ]
-           (.moveTo term x y "X")) coords))))
+        ends (end-points character)
+        lines (map #(let [dx (first %)
+                          dy (second %)
+                          start #js[(inc x) (inc y)]
+                          end   #js[dx dy]]
+                      (js->clj (bresenham start end))) ends)]
+    (run!
+      (partial draw-line term) lines)))
 
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color] } block
