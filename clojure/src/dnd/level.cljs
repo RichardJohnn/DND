@@ -24,10 +24,12 @@
         inhabitants (if (and (not solid) has-inhabitant)
                       [(assoc base-character :char "e" :color (rand-int 256))]
                       [])
-        color (color-to-array (if (and walkable (> (rand) 0.9))
-                (COLOR "blue")
-                (COLOR "green")
-                ))]
+        color (color-to-array
+                (if-not walkable
+                  (COLOR "grey")
+                  (if (> (rand) 0.9)
+                    (COLOR "blue")
+                    (COLOR "green"))))]
     (assoc block
            :x x
            :y y
