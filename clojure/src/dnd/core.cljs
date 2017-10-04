@@ -2,7 +2,7 @@
   (:require
     [ cljs.nodejs :as nodejs ]
     [ cljs.core.async :refer [chan close! <! timeout] ]
-    [ dnd.level :as level ]
+    [ dnd.level ]
     [ dnd.character :as character]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
@@ -30,7 +30,7 @@
 
 (defonce level
   (let [{:keys [x y]} @character
-        level (atom (level/make-level))
+        level (atom (dnd.level/make-level))
         [level] (character/move-character! level character x y)]
     level))
 

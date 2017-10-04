@@ -12,6 +12,7 @@
             :y 0
             :inhabitants []
             :solid false
+            :visible true
             })
 
 (def width  20)
