@@ -1,4 +1,6 @@
-(ns dnd.character)
+(ns dnd.character
+  (:require [com.rpl.specter :as s])
+  (:require [com.rpl.specter :as s :refer-macros [select transform setval]]))
 
 (defonce base-character {:char "@"
                          :x 3
