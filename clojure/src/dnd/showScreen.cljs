@@ -26,23 +26,15 @@
     (partial draw-x term) line))
 
 (defn shorten-line [level line]
-  (take-while #(let [[x y] %
+  (def shortened-line (take-while #(let [[x y] %
                      x (min (dec width)  (max 0 (dec x)))
                      y (min (dec height) (max 0 (dec y)))
                      current-block (get-in level [x y])]
                  (not (current-block :solid))
                  ) line))
-
-(defn fov [character]
-  (let [{:keys [x y direction]} character
-        [x y] (map inc [x y])
-        ends (end-points character)
-        lines (map #(let [dx (first %)
-                          dy (second %)
-                          start #js[x y]
-                          end   #js[dx dy]]
-                      (js->clj (bresenham start end))) ends)]
-    lines))
+  (if (apply not= (map count [shortened-line line]))
+    (concat shortened-line (list (nth line (count shortened-line))))
+    line))
 
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color]} block
@@ -59,10 +51,21 @@
     (apply (.-bgColorRgb term) bgcolor)
     (.moveTo        term x y char)))
 
-(defn get-block [level coords]
-  (let [[x y] coords]
-    (get-in level [x y])))
+(defn fov [character]
+  (let [{:keys [x y direction]} character
+        [x y] (map inc [x y])
+        ends (end-points character)
+        lines (map #(let [dx (first %)
+                          dy (second %)
+                          start #js[x y]
+                          end   #js[dx dy]]
+                      (js->clj (bresenham start end))) ends)]
+    lines))
 
+(defn viewable-coords [character level]
+  (let [fov-blocks (fov character)
+        viewable-coords (map (partial shorten-line level) fov-blocks)]
+    (apply concat viewable-coords)))
 
 (defn dimmed-blocks [level coords]
   (let [flattened-level (flatten level)
@@ -76,18 +79,15 @@
     (map #(if (block-not-in-coords %) (dim-block %) (lit-block %)) flattened-level)
     ))
 
-(defn viewable-coords [level character]
-  (let [fov-blocks (fov character)
-        viewable-coords (map (partial shorten-line level) fov-blocks)]
-    (apply concat viewable-coords)))
-
 (defn show-screen [term level character]
-  (def jeah (viewable-coords level character))
-  (def viewable-blocks (map (partial get-block level) jeah))
-  (def new-blocks (dimmed-blocks level jeah))
-  (run! #(draw-block term %) new-blocks)
-  ;(run! (partial draw-line term) viewable-coords)
+  (defn callback [error] (when error (println error)))
 
+  (def new-blocks
+    (->> level
+        (viewable-coords character)
+        (dimmed-blocks level)
+        (run! #(draw-block term %))
+        ))
 
   (.color256    term 7)
   (.bgColor256  term 0)
