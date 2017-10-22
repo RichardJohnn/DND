@@ -7,13 +7,32 @@
 (def bresenham (nodejs/require "bresenham-js"))
 
 (defn end-points [character]
-  (let [_width  (inc width)
-        _height (inc height)]
-    (vec (case (:direction character)
-           "n" (map #(vec [% 0])      (range 0 _width))
-           "s" (map #(vec [% height]) (range 0 _width))
-           "w" (map #(vec [0 %])      (range 0 _height))
-           "e" (map #(vec [width %])  (range 0 _height))))))
+  (let [{:keys [x y]} character
+        _width  (inc width)
+        _height (inc height)
+        zw (range 0 _width)
+        zh (range 0 _height)
+        ziy (range 0 (inc y))
+        zix (range 0 (inc x))
+        ++yh (range (+ 2 y) height)
+        ++xw (range (+ 2 x) width)
+        opposite-wall (vec (case (:direction character)
+           "n" (map #(vec [% 0])      zw)
+           "s" (map #(vec [% height]) zw)
+           "w" (map #(vec [0 %])      zh)
+           "e" (map #(vec [width %])  zh)))
+        adjenct-wall (vec (case (:direction character)
+           "n" (map #(vec [0 %])      ziy)
+           "s" (map #(vec [0 %])      ++yh)
+           "w" (map #(vec [% 0])      zix)
+           "e" (map #(vec [% 0])      ++xw)))
+        adjenct-wall2 (vec (case (:direction character)
+           "n" (map #(vec [width %])  ziy)
+           "s" (map #(vec [width %])  ++yh)
+           "w" (map #(vec [% height]) zix)
+           "e" (map #(vec [% height]) ++xw)))]
+    (concat opposite-wall adjenct-wall adjenct-wall2)
+    ))
 
 (defn draw-x [term coords]
   (.color256    term 7)
@@ -52,14 +71,15 @@
     (.moveTo        term x y char)))
 
 (defn fov [character]
-  (let [{:keys [x y direction]} character
+  (let [{:keys [x y direction view-distance]} character
         [x y] (map inc [x y])
         ends (end-points character)
         lines (map #(let [dx (first %)
                           dy (second %)
                           start #js[x y]
                           end   #js[dx dy]]
-                      (js->clj (bresenham start end))) ends)]
+                      (take view-distance (js->clj (bresenham start end))))
+                   ends)]
     lines))
 
 (defn viewable-coords [character level]

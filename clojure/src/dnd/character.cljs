@@ -7,6 +7,7 @@
                          :y 2
                          :hp 20
                          :inventory []
+                         :view-distance 10
                          :direction "n" })
 
 (defn is-character [inhabitant] (= "@" (:char inhabitant)))
