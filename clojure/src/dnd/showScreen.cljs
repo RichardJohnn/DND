@@ -32,7 +32,7 @@
                      current-block (get-in level [x y])]
                  (not (current-block :solid))
                  ) line))
-  (if (apply not= (map count [shortened-line line]))
+  (if (apply not= (map last [shortened-line line]))
     (concat shortened-line (list (nth line (count shortened-line))))
     line))
 
