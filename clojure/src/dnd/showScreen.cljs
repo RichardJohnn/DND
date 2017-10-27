@@ -100,7 +100,12 @@
     ))
 
 (defn show-screen [term level character]
-  (defn callback [error] (when error (println error)))
+  ;(defn callback [error] (when error (println error)))
+  ;(.drawImage term
+              ;"http://www.ontariotrails.on.ca/assets/images/mastheads-all/cheltenham2.jpg"
+              ;#js {:shrink #js {:width 100 :height 100}}
+              ;callback
+              ;)
 
   (def new-blocks
     (->> level
