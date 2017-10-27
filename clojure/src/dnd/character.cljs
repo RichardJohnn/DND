@@ -8,6 +8,7 @@
                          :y 2
                          :hp 20
                          :inventory []
+                         :description "shit"
                          :view-distance 10
                          :direction "n" })
 

@@ -26,7 +26,11 @@
   (.removeAllListeners term "key")
   (.removeAllListeners keyboard/emitter))
 
-(defonce character (atom character/base-character))
+(defonce character (atom
+                     (assoc character/base-character
+                            :isPlayer true
+                            :description "hero"
+                            )))
 
 (defonce level
   (let [{:keys [x y]} @character
