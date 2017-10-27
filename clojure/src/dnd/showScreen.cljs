@@ -58,7 +58,7 @@
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color]} block
         has-inhabitant (boolean (seq inhabitants))
-        fgcolor (or (:color (first inhabitants)) 0)
+        fgcolor (or (:color (first inhabitants)) [0 0 0])
         bgcolor (.rgb COLOR color)
         ;night true
         ;bgcolor (if night (.darken bgcolor .9) bgcolor)
@@ -66,7 +66,7 @@
         char    (if has-inhabitant
                   (:char (first inhabitants))
                   (if solid "▒" " "))]
-    (.color256      term fgcolor)
+    (apply (.-colorRgb term) fgcolor)
     (apply (.-bgColorRgb term) bgcolor)
     (.moveTo        term x y char)))
 

@@ -20,7 +20,7 @@
         walkable (not solid)
         has-inhabitant (> (rand) .8)
         inhabitants (if (and (not solid) has-inhabitant)
-                      [(assoc base-character :char "e" :color (rand-int 256))]
+                      [(egg)]
                       [])
         color (color-to-array
                 (if-not walkable

@@ -1,6 +1,7 @@
 (ns dnd.character
-  (:require [com.rpl.specter :as s])
-  (:require [com.rpl.specter :as s :refer-macros [select transform setval]]))
+  (:require [dnd.color :refer [color-name]]
+            [com.rpl.specter :as s]
+            [com.rpl.specter :as s :refer-macros [select transform setval]]))
 
 (defonce base-character {:char "@"
                          :isPlayer false
@@ -18,6 +19,19 @@
   (if (= dx 0)
     (if (= dy 1) "s" "n")
     (if (= dx 1) "e" "w")))
+
+(defn egg []
+  (def rgb-vec (vec (repeatedly 3 #(rand-int 256))))
+  (def name-of-color (color-name rgb-vec))
+  (def description "a nice egg")
+  (assoc base-character
+         :char "e"
+         :color rgb-vec
+         :color-name name-of-color
+         :description description
+         :colorful-description (str description ", " name-of-color)
+         )
+  )
 
 (defn redirect-character! [character dx dy]
   (swap! character assoc :direction (character-direction dx dy)))
