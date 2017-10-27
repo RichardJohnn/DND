@@ -1,11 +1,8 @@
 (ns dnd.level
    (:require [cljs.nodejs :as nodejs]
-             [dnd.character :refer [base-character]]
-             [dnd.color :refer [color-to-array]]
+             [dnd.character :refer [base-character egg]]
+             [dnd.color :refer [COLOR color-to-array color-name]]
              ))
-
-(def COLOR
-  (nodejs/require "color"))
 
 (def block {
             :x 0
