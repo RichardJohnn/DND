@@ -20,6 +20,7 @@
     "RIGHT" (emit "move"  level character  1  0)
     "g"     (emit "get"   level character)
     "d"     (emit "drop"  level character)
+    "i"     (emit "inventory" character)
     "ESCAPE" (.exit js/process)
     "default"))
 

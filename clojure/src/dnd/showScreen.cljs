@@ -119,3 +119,15 @@
 
   )
 
+(defn inventory-selected [error response]
+  (if error
+    (println "oh crap")
+    (println "you stare at" (.-selectedText response))
+    ))
+
+(defn show-inventory [term character]
+  (let [descriptions (->> character :inventory (map :colorful-description))]
+    (when-not (empty? descriptions)
+      (.gridMenu term (clj->js descriptions) inventory-selected))
+    ))
+

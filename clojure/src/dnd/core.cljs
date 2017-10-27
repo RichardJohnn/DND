@@ -40,6 +40,8 @@
 
 (defn show-screen [] (show/show-screen term @level @character))
 
+(defn show-inventory [] (show/show-inventory term @character))
+
 (defn move-handler [level character dx dy]
   (let [{:keys [x y]} @character
         new-x (+ x dx)
@@ -67,7 +69,9 @@
             function    (case action-name
                           "move" move-handler
                           "get"  get-handler
-                          "drop" drop-handler)]
+                          "drop" drop-handler
+                          "inventory" show-inventory
+                          )]
 
         (apply function args)
         (swap! queue pop))
@@ -89,6 +93,7 @@
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
+  (.on keyboard/emitter "inventory" (partial pusher! "inventory"))
   (show-screen)
   (popper! queue)
   )
