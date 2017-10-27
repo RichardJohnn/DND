@@ -3,6 +3,7 @@
   (:require [com.rpl.specter :as s :refer-macros [select transform setval]]))
 
 (defonce base-character {:char "@"
+                         :isPlayer false
                          :x 3
                          :y 2
                          :hp 20
@@ -10,7 +11,7 @@
                          :view-distance 10
                          :direction "n" })
 
-(defn is-character [inhabitant] (= "@" (:char inhabitant)))
+(defn is-character [inhabitant] (:isPlayer inhabitant))
 
 (defn character-direction [dx dy]
   (if (= dx 0)
