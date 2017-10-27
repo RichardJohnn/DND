@@ -59,13 +59,14 @@
     level))
 
 (defn get-item! [level character]
-  (let [{:keys [x y]} @character
+  (let [{:keys [x y inventory]} @character
         {old-inhabitants :inhabitants} (get-in @level [x y])
         gotten-inhabitant (first (remove is-character old-inhabitants))
 
-        inventory (:inventory @character)
-        new-inventory (conj inventory gotten-inhabitant)
-        updated-character (swap! character assoc :inventory new-inventory)
+
+        updated-character (when-not (nil? gotten-inhabitant)
+                            (swap! character assoc :inventory
+                                   (conj inventory gotten-inhabitant)))
 
         matcher #(= gotten-inhabitant %)
         remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
