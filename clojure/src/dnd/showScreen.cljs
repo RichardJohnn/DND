@@ -107,12 +107,10 @@
               ;callback
               ;)
 
-  (def new-blocks
-    (->> level
-        (viewable-coords character)
-        (dimmed-blocks level)
-        (run! #(draw-block term %))
-        ))
+  (->> level
+       (viewable-coords character)
+       (dimmed-blocks level)
+       (run! #(draw-block term %)))
 
   (.color256    term 7)
   (.bgColor256  term 0)
