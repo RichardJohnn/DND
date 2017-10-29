@@ -20,18 +20,31 @@
     (if (= dy 1) "s" "n")
     (if (= dx 1) "e" "w")))
 
+(defn rand-rgb-vec [] (vec (repeatedly 3 #(rand-int 256))))
+
 (defn egg []
-  (def rgb-vec (vec (repeatedly 3 #(rand-int 256))))
-  (def name-of-color (color-name rgb-vec))
-  (def description "a nice egg")
-  (assoc base-character
-         :char "e"
-         :color rgb-vec
-         :color-name name-of-color
-         :description description
-         :colorful-description (str description ", " name-of-color)
-         )
-  )
+  (let [rgb-vec (rand-rgb-vec)
+        name-of-color (color-name rgb-vec)
+        description "a nice egg"]
+    (assoc base-character
+           :char "🥚" 
+           :color rgb-vec
+           :color-name name-of-color
+           :description description
+           :colorful-description (str description ", " name-of-color)
+           )))
+
+(defn person [char description]
+  (let [rgb (rand-rgb-vec)
+        name-of-color (color-name rgb)
+        description "a very nice person"]
+    (assoc base-character
+           :char char
+           :color rgb
+           :color-name name-of-color
+           :description description
+           :colorful-description (str description ", " name-of-color)
+           )))
 
 (defn redirect-character! [character dx dy]
   (swap! character assoc :direction (character-direction dx dy)))

@@ -1,6 +1,6 @@
 (ns dnd.level
    (:require [cljs.nodejs :as nodejs]
-             [dnd.character :refer [base-character egg]]
+             [dnd.character :refer [base-character person egg]]
              [dnd.color :refer [COLOR color-to-array color-name]]
              ))
 
@@ -18,9 +18,12 @@
 (defn make-block [x y]
   (let [solid (> (rand) 0.9)
         walkable (not solid)
-        has-inhabitant (> (rand) .8)
+        has-inhabitant (> (rand) .9)
+        has-person (> (rand) .5)
         inhabitants (if (and (not solid) has-inhabitant)
-                      [(egg)]
+                      (if has-person
+                        [(person "☻" "happy")]
+                        [(egg)])
                       [])
         color (color-to-array
                 (if-not walkable
