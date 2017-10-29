@@ -14,6 +14,11 @@
 
   :source-paths ["src"]
 
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.2"]
+                                  [figwheel-sidecar "0.5.8"]]}}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+
+
   :clean-targets ["server.js"
                   "target"]
 
