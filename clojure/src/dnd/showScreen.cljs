@@ -4,6 +4,8 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
+(defonce terminal (nodejs/require "terminal-kit"))
+
 (def bresenham (nodejs/require "bresenham-js"))
 
 (defn end-points [character]
@@ -102,10 +104,17 @@
 (defn show-screen [term level character]
   ;(defn callback [error] (when error (println error)))
   ;(.drawImage term
-              ;"http://www.ontariotrails.on.ca/assets/images/mastheads-all/cheltenham2.jpg"
-              ;#js {:shrink #js {:width 100 :height 100}}
-              ;callback
-              ;)
+  ;"http://www.ontariotrails.on.ca/assets/images/mastheads-all/cheltenham2.jpg"
+  ;#js {:shrink #js {:width 100 :height 100}}
+  ;callback
+  ;)
+
+  ;; (def buffer ((.. terminal -ScreenBuffer -create) #js {:dst term :width 20 :height 10}))
+  ;; (.put buffer
+  ;;       #js {:x 0 :y 2 :attr #js {:color "green" :bgColor "black"}}
+  ;;       "Pizza is Forever")
+  ;; (.draw buffer)
+
 
   (->> level
        (viewable-coords character)
