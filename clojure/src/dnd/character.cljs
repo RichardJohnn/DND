@@ -1,7 +1,5 @@
 (ns dnd.character
-  (:require [dnd.color :refer [color-name]]
-            [com.rpl.specter :as s]
-            [com.rpl.specter :as s :refer-macros [select transform setval]]))
+  (:require [dnd.color :refer [color-name]]))
 
 (defonce base-character {:char "🐰"
                          :isPlayer false
@@ -27,17 +25,17 @@
         name-of-color (color-name rgb-vec)
         description "a nice egg"]
     (assoc base-character
-           :char "🥚" 
+           :char "●"
            :color rgb-vec
            :color-name name-of-color
            :description description
            :colorful-description (str description ", " name-of-color)
            )))
 
-(defn person [char description]
+(defn tree [char description]
   (let [rgb (rand-rgb-vec)
         name-of-color (color-name rgb)
-        description "a very nice person"]
+        description "a very nice tree"]
     (assoc base-character
            :char char
            :color rgb
