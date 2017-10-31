@@ -3,7 +3,7 @@
             [com.rpl.specter :as s]
             [com.rpl.specter :as s :refer-macros [select transform setval]]))
 
-(defonce base-character {:char "@"
+(defonce base-character {:char "🐰"
                          :isPlayer false
                          :x 3
                          :y 2
