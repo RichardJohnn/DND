@@ -57,6 +57,24 @@
     (concat shortened-line (list (nth line (count shortened-line))))
     line))
 
+(defn put-block [buffer block]
+  (let [{:keys [x y solid inhabitants color visible]} block
+        has-inhabitant (boolean (seq inhabitants))
+        fgcolor (or (:color (first inhabitants)) [0 0 0])
+        [r g b] fgcolor
+        bgcolor (color-to-vec (.rgb COLOR color))
+        [bgR bgG bgB] bgcolor
+        char    (if-not visible
+                  " "
+                  (if has-inhabitant
+                    (:char (first inhabitants))
+                    (if solid "▒" " ")))]
+    (.put buffer
+          #js {:x x :y y
+               :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}
+          char)))
+
+
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color visible]} block
         has-inhabitant (boolean (seq inhabitants))
@@ -103,33 +121,30 @@
     (map #(if (block-not-in-coords %) (dim-block %) (lit-block %)) flattened-level)
     ))
 
+
 (defn show-screen [term level character]
-  ;(defn callback [error] (when error (println error)))
-  ;(.drawImage term
-  ;"http://www.ontariotrails.on.ca/assets/images/mastheads-all/cheltenham2.jpg"
-  ;#js {:shrink #js {:width 100 :height 100}}
-  ;callback
-  ;)
-
-  ;; (def buffer ((.. terminal -ScreenBuffer -create) #js {:dst term :width 20 :height 10}))
-  ;; (.put buffer
-  ;;       #js {:x 0 :y 2 :attr #js {:color "green" :bgColor "black"}}
-  ;;       "Pizza is Forever")
-  ;; (.draw buffer)
-
+  (defonce buffer ((.. terminal -ScreenBufferHD -create)
+                   #js {
+                        :dst term
+                        :x 0
+                        :y 0
+                        :width width
+                        :height height
+                        }))
 
   (->> level
        (viewable-coords character)
        (dimmed-blocks level)
-       (run! #(draw-block term %)))
+       (run! #(put-block buffer %)))
+
+  (.draw buffer #js {:delta true})
 
   (.color256    term 7)
   (.bgColor256  term 0)
   (.moveTo term (+ 2 width) 1 (str "HP: " (:hp character)))
   (.moveTo term (+ 2 width) 2 (str "INV: " (count (:inventory character))))
   (.moveTo term 0 (inc height) "got some text down below\n\n")
-  (.moveTo term 0 (+ 2 height))
-  (.moveTo term 0 (+ 15 height))
+  (.moveTo term 0 (+ 10 height))
 
   )
 
