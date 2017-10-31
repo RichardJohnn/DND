@@ -12,8 +12,10 @@
 
 (nodejs/enable-util-print!)
 
-(def term
-  (.-terminal (nodejs/require "terminal-kit")))
+(defonce tkit (nodejs/require "terminal-kit"))
+(defonce net (nodejs/require "net"))
+
+(declare term)
 
 (defn setup [term]
   (do
@@ -81,8 +83,19 @@
     (recur queue))
   )
 
-(defn -main []
+
+(defn herp [term]
   (.clear term)
+  (.grabInput term true)
+  (.red term "YEAH")
+  ;; (.on term "key"  #((let [string (str "key was " %)]
+  ;;                    (println string)
+  ;;                    (.send client string)
+  ;;                    )))
+  ;; (.on term "data" #((let [string (str "data was " %)]
+  ;;                    (println string)
+  ;;                    (.send client string)
+  ;;                    )))
   (teardown term)
   (setup term)
 
@@ -94,11 +107,33 @@
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
   (.on keyboard/emitter "inventory" (partial pusher! "inventory"))
+
+  (prn "first show screen")
   (show-screen)
-  (popper! queue)
+  (popper! queue))
+
+(defn telnet-server [client]
+  (prn "telnet-server")
+
+  (def term
+    (.createTerminal tkit #js {:stdin client :stdout client}))
+
+  (herp term))
+
+(defn -main []
+  (prn "main")
+  (if (-> (last process.argv)
+          (= "server"))
+    (doto (.createServer net telnet-server)
+      (.listen 23))
+    (doto (def term (.-terminal tkit))
+      (herp)
+      ))
   )
 
 (set! *main-cli-fn* -main)
 
-(-main)
+;; (-main)
+
+
 (show-screen)

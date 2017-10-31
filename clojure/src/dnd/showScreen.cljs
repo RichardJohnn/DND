@@ -106,31 +106,34 @@
     (apply concat viewable-coords)))
 
 (defn show-screen [term level character]
-  (let [buffer ((.. terminal -ScreenBufferHD -create)
-                #js {
-                     :dst term
-                     :x 0
-                     :y 0
-                     :width width
-                     :height height
-                     })
+  (let [
+        ;; buffer ((.. terminal -ScreenBufferHD -create)
+        ;;         #js {
+        ;;              :dst term
+        ;;              :x 0
+        ;;              :y 0
+        ;;              :width width
+        ;;              :height height
+        ;;              })
         get-in-level (partial get-in level)]
 
     (->> level
          (viewable-coords character)
          (map get-in-level)
-         (run! #(put-block buffer %)))
+         ;; (run! #(put-block buffer %))
+         (run! #(draw-block term %))
+         )
 
-    (.draw buffer #js {:delta true}))
+    ;; (.draw buffer #js {:delta true})
+    )
 
   (.color256    term 7)
   (.bgColor256  term 0)
   (.moveTo term (+ 2 width) 1 (str "HP: " (:hp character)))
   (.moveTo term (+ 2 width) 2 (str "INV: " (count (:inventory character))))
+  (.moveTo term (+ 2 width) 3 (str "trueColor: " (.. term -support -trueColor)))
   (.moveTo term 0 (inc height) "got some text down below\n\n")
-  (.moveTo term 0 (+ 10 height))
-
-  )
+  (.moveTo term 0 (+ 10 height)))
 
 (defn inventory-selected [error response]
   (if error
