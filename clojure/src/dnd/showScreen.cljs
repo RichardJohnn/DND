@@ -6,7 +6,7 @@
 
 (defonce terminal (nodejs/require "terminal-kit"))
 
-(def bresenham (nodejs/require "bresenham-js"))
+(defonce bresenham (nodejs/require "bresenham-js"))
 
 (defn end-points [character]
   (let [{:keys [x y]} character
