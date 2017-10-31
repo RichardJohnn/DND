@@ -27,10 +27,10 @@
                       [])
         color (color-to-array
                 (if-not walkable
-                  (COLOR "grey")
+                  (COLOR "#b1b7b7")
                   (if (> (rand) 0.9)
-                    (COLOR "blue")
-                    (COLOR "green"))))]
+                    (COLOR "#0078ff")
+                    (COLOR "#0cce0c"))))]
     (assoc block
            :x x
            :y y
