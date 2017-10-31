@@ -80,14 +80,10 @@
         has-inhabitant (boolean (seq inhabitants))
         fgcolor (or (:color (first inhabitants)) [0 0 0])
         bgcolor (.rgb COLOR color)
-        ;night true
-        ;bgcolor (if night (.darken bgcolor .9) bgcolor)
         bgcolor (color-to-vec bgcolor)
-        char    (if-not visible
-                  " "
-                  (if has-inhabitant
-                   (:char (first inhabitants))
-                   (if solid "▒" " ")))]
+        char    (if has-inhabitant
+                  (:char (first inhabitants))
+                  (if solid "▒" " "))]
     (apply (.-colorRgb term) fgcolor)
     (apply (.-bgColorRgb term) bgcolor)
     (.moveTo        term x y char)))
@@ -109,35 +105,23 @@
         viewable-coords (map (partial shorten-line level) fov-blocks)]
     (apply concat viewable-coords)))
 
-(defn dimmed-blocks [level coords]
-  (let [flattened-level (flatten level)
-        block-not-in-coords (fn [block]
-                              (let [{x :x y :y} block]
-                                (not-any? #(= [x y] %) coords)
-                                ))
-        dim-block #(assoc % :visible false :color #js [0 0 0])
-        lit-block #(assoc % :visible true)
-        ]
-    (map #(if (block-not-in-coords %) (dim-block %) (lit-block %)) flattened-level)
-    ))
-
-
 (defn show-screen [term level character]
-  (defonce buffer ((.. terminal -ScreenBufferHD -create)
-                   #js {
-                        :dst term
-                        :x 0
-                        :y 0
-                        :width width
-                        :height height
-                        }))
+  (let [buffer ((.. terminal -ScreenBufferHD -create)
+                #js {
+                     :dst term
+                     :x 0
+                     :y 0
+                     :width width
+                     :height height
+                     })
+        get-in-level (partial get-in level)]
 
-  (->> level
-       (viewable-coords character)
-       (dimmed-blocks level)
-       (run! #(put-block buffer %)))
+    (->> level
+         (viewable-coords character)
+         (map get-in-level)
+         (run! #(put-block buffer %)))
 
-  (.draw buffer #js {:delta true})
+    (.draw buffer #js {:delta true}))
 
   (.color256    term 7)
   (.bgColor256  term 0)
