@@ -93,7 +93,7 @@
   )
 
 
-(defn herp [term]
+(defn herp [term client]
   (.on term "key"  #((let [string (str "key was " %)]
                      (println string)
                      (.send client string)
