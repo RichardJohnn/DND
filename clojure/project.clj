@@ -9,6 +9,8 @@
                  [com.rpl/specter "1.0.3"]
                  ]
 
+  ;:jvm-opts ["-Dclojure.server.repl={:port 5555 :accept clojure.core.server/repl}"]
+
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-2"]]
 
