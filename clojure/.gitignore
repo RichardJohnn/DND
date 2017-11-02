@@ -7,4 +7,5 @@
 .lein-repl-history
 .lein-plugins/
 figwheel_server.log
+.nrepl-port
 pom.xml
