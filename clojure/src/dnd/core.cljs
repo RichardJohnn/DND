@@ -17,17 +17,6 @@
 
 (declare term)
 
-(defn setup [term]
-  (do
-    (.applicationKeypad term)
-    (.hideCursor term)
-    (.grabInput term #js { :mouse "button" :focus true })
-    ))
-
-(defn teardown [term]
-  (.removeAllListeners term "key")
-  (.removeAllListeners keyboard/emitter))
-
 (defonce character (atom
                      (assoc character/base-character
                             :isPlayer true
@@ -62,9 +51,30 @@
       (character/drop-item! level character lastItem)
       (show-screen))))
 
+(def queue (atom #queue []))
+
+(defn pusher! [& arguments] (swap! queue conj arguments))
+
+(defn setup [term]
+  (doto term
+    (.clear)
+    (.applicationKeypad)
+    (.hideCursor )
+    (.grabInput #js { :mouse "button" :focus true }))
+
+  (keyboard/HandleCharacterKeys term level character)
+  (.on keyboard/emitter "move" (partial pusher! "move"))
+  (.on keyboard/emitter "get"  (partial pusher! "get"))
+  (.on keyboard/emitter "drop" (partial pusher! "drop"))
+  (.on keyboard/emitter "inventory" (partial pusher! "inventory")))
+
+(defn teardown [term]
+  (.removeAllListeners term "key")
+  (.removeAllListeners keyboard/emitter))
+
 (defn popper! [queue]
   (go-loop [q queue]
-    (if (not (empty? @queue))
+    (when-not (empty? @queue)
       (let [next-action (peek @queue)
             action-name (first next-action)
             args        (rest next-action)
@@ -76,8 +86,7 @@
                           )]
 
         (apply function args)
-        (swap! queue pop))
-      nil)
+        (swap! queue pop)))
 
     (<! (timeout 100))
     (recur queue))
@@ -85,55 +94,28 @@
 
 
 (defn herp [term]
-  (.clear term)
-  (.grabInput term true)
-  (.red term "YEAH")
-  ;; (.on term "key"  #((let [string (str "key was " %)]
-  ;;                    (println string)
-  ;;                    (.send client string)
-  ;;                    )))
-  ;; (.on term "data" #((let [string (str "data was " %)]
-  ;;                    (println string)
-  ;;                    (.send client string)
-  ;;                    )))
-  (teardown term)
-  (setup term)
+  (.on term "key"  #((let [string (str "key was " %)]
+                     (println string)
+                     (.send client string)
+                     )))
+  (.on term "data" #((let [string (str "data was " %)]
+                     (println string)
+                     (.send client string)
+                     ))))
 
-  (def queue (atom #queue []))
-  (defn pusher! [& arguments] (swap! queue conj arguments))
-
-  (keyboard/HandleCharacterKeys term level character)
-  (.on keyboard/emitter "move" (partial pusher! "move"))
-  (.on keyboard/emitter "get"  (partial pusher! "get"))
-  (.on keyboard/emitter "drop" (partial pusher! "drop"))
-  (.on keyboard/emitter "inventory" (partial pusher! "inventory"))
-
-  (prn "first show screen")
-  (show-screen)
-  (popper! queue))
-
-(defn telnet-server [client]
-  (prn "telnet-server")
-
-  (def term
-    (.createTerminal tkit #js {:stdin client :stdout client}))
-
-  (herp term))
 
 (defn -main []
   (prn "main")
   (if (-> (last process.argv)
           (= "server"))
-    (doto (.createServer net telnet-server)
+    (doto (.createServer net #(def term (.createTerminal tkit #js {:stdin % :stdout %})))
       (.listen 23))
-    (doto (def term (.-terminal tkit))
-      (herp)
-      ))
-  )
+    (def term (.-terminal tkit)))
+
+  (teardown term)
+  (setup term)
+  (show-screen)
+  (popper! queue))
 
 (set! *main-cli-fn* -main)
 
-;; (-main)
-
-
-(show-screen)
