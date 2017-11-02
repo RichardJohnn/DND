@@ -93,15 +93,15 @@
   )
 
 
-(defn herp [term client]
-  (.on term "key"  #((let [string (str "key was " %)]
-                     (println string)
-                     (.send client string)
-                     )))
-  (.on term "data" #((let [string (str "data was " %)]
-                     (println string)
-                     (.send client string)
-                     ))))
+;(defn herp [term client]
+  ;(.on term "key"  #((let [string (str "key was " %)]
+                     ;(println string)
+                     ;(.send client string)
+                     ;)))
+  ;(.on term "data" #((let [string (str "data was " %)]
+                     ;(println string)
+                     ;(.send client string)
+                     ;))))
 
 
 (defn -main []
