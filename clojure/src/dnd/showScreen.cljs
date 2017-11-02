@@ -127,13 +127,14 @@
     ;; (.draw buffer #js {:delta true})
     )
 
-  (.color256    term 7)
-  (.bgColor256  term 0)
-  (.moveTo term (+ 2 width) 1 (str "HP: " (:hp character)))
-  (.moveTo term (+ 2 width) 2 (str "INV: " (count (:inventory character))))
-  (.moveTo term (+ 2 width) 3 (str "trueColor: " (.. term -support -trueColor)))
-  (.moveTo term 0 (inc height) "got some text down below\n\n")
-  (.moveTo term 0 (+ 10 height)))
+  (doto term
+    (.color256    7)
+    (.bgColor256  0)
+    (.moveTo (+ 2 width) 1 (str "HP: " (:hp character)))
+    (.moveTo (+ 2 width) 2 (str "INV: " (count (:inventory character))))
+    (.moveTo (+ 2 width) 3 (str "trueColor: " (.. term -support -trueColor)))
+    ;(.moveTo 0 (inc height) "got some text down below\n\n")
+    (.moveTo 0 (+ 10 height))))
 
 (defn inventory-selected [error response]
   (if error
