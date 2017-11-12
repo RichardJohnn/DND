@@ -105,27 +105,39 @@
         viewable-coords (map (partial shorten-line level) fov-blocks)]
     (apply concat viewable-coords)))
 
-(defn show-screen [term level character]
+
+(defn show-map-direct [term level character]
+  (let [get-in-level (partial get-in level)]
+    (->> level
+         (viewable-coords character)
+         (map get-in-level)
+         (run! #(draw-block term %)))))
+
+(defn show-map-with-buffer [term level character]
   (let [
-        ;; buffer ((.. terminal -ScreenBufferHD -create)
-        ;;         #js {
-        ;;              :dst term
-        ;;              :x 0
-        ;;              :y 0
-        ;;              :width width
-        ;;              :height height
-        ;;              })
+        buffer ((.. terminal -ScreenBufferHD -create)
+                #js {
+                     :dst term
+                     :x 0
+                     :y 0
+                     :width width
+                     :height height
+                     })
         get-in-level (partial get-in level)]
 
     (->> level
          (viewable-coords character)
          (map get-in-level)
-         ;; (run! #(put-block buffer %))
-         (run! #(draw-block term %))
-         )
+         (run! #(put-block buffer %)))
 
-    ;; (.draw buffer #js {:delta true})
-    )
+    (.draw buffer #js {:delta true})))
+
+
+
+(defn show-screen [term level character]
+  (if (-> (.-support term) (aget "trueColor"))
+    (show-map-with-buffer term level character)
+    (show-map-direct term level character))
 
   (doto term
     (.color256    7)

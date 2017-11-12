@@ -103,19 +103,29 @@
                      ;(.send client string)
                      ;))))
 
-
-(defn -main []
-  (prn "main")
-  (if (-> (last process.argv)
-          (= "server"))
-    (doto (.createServer net #(def term (.createTerminal tkit #js {:stdin % :stdout %})))
-      (.listen 23))
-    (def term (.-terminal tkit)))
-
+(defn kick-it [term]
   (teardown term)
   (setup term)
   (show-screen)
   (popper! queue))
 
+(defn create-server []
+  (doto (.createServer net
+    (fn [client]
+      (def term (.createTerminal tkit
+                                 #js {:stdin client :stdout client}))
+      (kick-it term)))
+   (.listen 23)))
+
+(defn -main []
+  (prn "main")
+  (if (-> (last process.argv)
+          (= "server"))
+    (create-server)
+    (do
+      (def term (.-terminal tkit))
+      (kick-it term))))
+
 (set! *main-cli-fn* -main)
+
 
