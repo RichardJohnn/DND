@@ -6,6 +6,9 @@
     [ dnd.character :as character]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
+    [com.rpl.specter :as s
+     :refer [FIRST]
+     :refer-macros [select transform setval]]
     )
   (:require-macros
     [cljs.core.async.macros :as m :refer [go-loop]]))
