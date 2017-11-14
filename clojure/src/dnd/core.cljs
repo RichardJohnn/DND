@@ -128,4 +128,4 @@
 
 (set! *main-cli-fn* -main)
 
-
+(when term (kick-it term))
