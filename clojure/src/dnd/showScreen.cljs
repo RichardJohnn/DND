@@ -90,7 +90,6 @@
 
 (defn fov [character]
   (let [{:keys [x y direction view-distance]} character
-        [x y] (map inc [x y])
         ends (end-points character)
         lines (map #(let [dx (first %)
                           dy (second %)
