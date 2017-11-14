@@ -14,10 +14,10 @@
         _height (inc height)
         zw (range 0 _width)
         zh (range 0 _height)
-        ziy (range 0 (inc y))
-        zix (range 0 (inc x))
-        ++yh (range (+ 2 y) height)
-        ++xw (range (+ 2 x) width)
+        ziy (range 0 y)
+        zix (range 0 x)
+        ++yh (range (inc y) height)
+        ++xw (range (inc x) width)
         opposite-wall (vec (case (:direction character)
            "n" (map #(vec [% 0])      zw)
            "s" (map #(vec [% height]) zw)
@@ -48,11 +48,11 @@
 
 (defn shorten-line [level line]
   (def shortened-line (take-while #(let [[x y] %
-                     x (min (dec width)  (max 0 (dec x)))
-                     y (min (dec height) (max 0 (dec y)))
+                     x (min (dec width)  (max 0 x))
+                     y (min (dec height) (max 0 y))
                      current-block (get-in level [x y])]
-                 (not (current-block :solid))
-                 ) line))
+                                     (not (current-block :solid))
+                                     ) line))
   (if (apply not= (map last [shortened-line line]))
     (concat shortened-line (list (nth line (count shortened-line))))
     line))
@@ -86,7 +86,7 @@
                   (if solid "▒" " "))]
     (apply (.-colorRgb term) fgcolor)
     (apply (.-bgColorRgb term) bgcolor)
-    (.moveTo        term x y char)))
+    (.moveTo term x y char)))
 
 (defn fov [character]
   (let [{:keys [x y direction view-distance]} character

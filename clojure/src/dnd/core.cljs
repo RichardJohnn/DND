@@ -59,7 +59,7 @@
   (doto term
     (.clear)
     (.applicationKeypad)
-    (.hideCursor )
+    (.hideCursor)
     (.grabInput #js { :mouse "button" :focus true }))
 
   (keyboard/HandleCharacterKeys term level character)
