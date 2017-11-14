@@ -74,23 +74,21 @@
 
 (defn popper! [queue]
   (go-loop [q queue]
-    (when-not (empty? @queue)
-      (let [next-action (peek @queue)
-            action-name (first next-action)
-            args        (rest next-action)
-            function    (case action-name
-                          "move" move-handler
-                          "get"  get-handler
-                          "drop" drop-handler
-                          "inventory" show-inventory
-                          )]
+    (when-let [next-action (peek @queue)
+               action-name (first next-action)
+               args        (rest next-action)
+               function    (case action-name
+                             "move" move-handler
+                             "get"  get-handler
+                             "drop" drop-handler
+                             "inventory" show-inventory
+                             )]
 
-        (apply function args)
-        (swap! queue pop)))
+      (apply function args)
+      (swap! queue pop))
 
     (<! (timeout 100))
-    (recur queue))
-  )
+    (recur queue)))
 
 
 ;(defn herp [term client]
