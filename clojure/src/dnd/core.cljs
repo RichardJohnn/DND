@@ -77,9 +77,8 @@
 
 (defn popper! [queue]
   (go-loop [q queue]
-    (when-not (empty? @queue)
-      (let [next-action (peek @queue)
-            action-name (first next-action)
+    (when-let [next-action (peek @queue)]
+      (let [action-name (first next-action)
             args        (rest next-action)
             function    (case action-name
                           "move" move-handler
