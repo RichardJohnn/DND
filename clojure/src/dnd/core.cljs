@@ -113,7 +113,7 @@
       (def term (.createTerminal tkit
                                  #js {:stdin client :stdout client}))
       (kick-it term)))
-   (.listen 23)))
+   (.listen 2323)))
 
 (defn -main []
   (prn "main")
