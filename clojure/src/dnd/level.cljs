@@ -44,9 +44,8 @@
    (make-level width height))
 
   ([width height]
-   (let [one-indexed-range #(map inc (range %))
-         row-array (one-indexed-range width)
-         col-array (one-indexed-range height)]
+   (let [row-array (range width)
+         col-array (range height)]
     (vec
       (for [x row-array]
         (vec (map #(make-block x %) col-array)))))))
