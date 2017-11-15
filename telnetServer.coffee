@@ -1,4 +1,4 @@
-Screen  = require './screen'
+Screen  = require './lib/gui/screen'
 telnet = require('telnet2')
 
 Server = ->

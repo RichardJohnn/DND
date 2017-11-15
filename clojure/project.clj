@@ -6,12 +6,20 @@
 
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.170"]
+                 [com.rpl/specter "1.0.3"]
                  ]
+
+  ;:jvm-opts ["-Dclojure.server.repl={:port 5555 :accept clojure.core.server/repl}"]
 
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel "0.5.0-2"]]
 
   :source-paths ["src"]
+
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.2"]
+                                  [figwheel-sidecar "0.5.8"]]}}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+
 
   :clean-targets ["server.js"
                   "target"]

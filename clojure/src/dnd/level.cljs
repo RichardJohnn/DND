@@ -1,22 +1,52 @@
-(ns dnd.level)
+(ns dnd.level
+   (:require [cljs.nodejs :as nodejs]
+             [dnd.character :refer [base-character tree egg]]
+             [dnd.color :refer [COLOR color-to-array color-name]]
+             ))
 
 (def block {
             :x 0
             :y 0
             :inhabitants []
             :solid false
+            :visible true
             })
 
-(def width  40)
-(def height 20)
+(def width  100)
+(def height 40)
 
 (defn make-block [x y]
-  (let [solid (> (rand) 0.9)]
-    (assoc block :x x :y y :solid solid)))
+  (let [solid (> (rand) 0.9)
+        walkable (not solid)
+        has-inhabitant (> (rand) .9)
+        has-tree (> (rand) .5)
+        inhabitants (if (and (not solid) has-inhabitant)
+                      (if has-tree
+                        [(tree "🌳" "happy")]
+                        [(egg)])
+                      [])
+        color (color-to-array
+                (if-not walkable
+                  (COLOR "#b1b7b7")
+                  (if (> (rand) 0.9)
+                    (COLOR "#0078ff")
+                    (COLOR "#0cce0c"))))]
+    (assoc block
+           :x x
+           :y y
+           :solid solid
+           :inhabitants inhabitants
+           :color color
+           )))
 
-(defn make-level []
-  (vec
-    (for [x (map inc (range width))
-          y (map inc (range height))]
-    (make-block x y))))
+(defn make-level
+  ([]
+   (make-level width height))
+
+  ([width height]
+   (let [row-array (range width)
+         col-array (range height)]
+    (vec
+      (for [x row-array]
+        (vec (map #(make-block x %) col-array)))))))
 
