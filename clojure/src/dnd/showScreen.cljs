@@ -147,14 +147,16 @@
     ;(.moveTo 0 (inc height) "got some text down below\n\n")
     (.moveTo 0 (+ 10 height))))
 
-(defn inventory-selected [error response]
-  (if error
-    (println "oh crap")
-    (println "you stare at" (.-selectedText response))
-    ))
+(defn inventory-selected [term error response]
+  (.moveTo term 0 (inc height)
+           (if error
+             "oh crap!"
+             (str "you stare at " (.-selectedText response)))))
 
 (defn show-inventory [term character]
-  (let [descriptions (->> character :inventory (map :colorful-description))]
+  (let [descriptions (->> character :inventory (map :colorful-description))
+        inventory-selected (partial inventory-selected term)
+        ]
     (when-not (empty? descriptions)
       (.gridMenu term (clj->js descriptions) inventory-selected))
     ))
