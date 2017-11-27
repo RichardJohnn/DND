@@ -74,18 +74,17 @@
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}
           char)))
 
-
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color visible]} block
         has-inhabitant (boolean (seq inhabitants))
-        fgcolor (or (:color (first inhabitants)) [0 0 0])
+        [fgR fgG fgB] (or (:color (first inhabitants)) [0 0 0])
         bgcolor (.rgb COLOR color)
-        bgcolor (color-to-vec bgcolor)
+        [bgR bgG bgB] (color-to-vec bgcolor)
         char    (if has-inhabitant
                   (:char (first inhabitants))
                   (if solid "▒" " "))]
-    (apply (.-colorRgb term) fgcolor)
-    (apply (.-bgColorRgb term) bgcolor)
+    (.colorRgb term fgR fgG fgB)
+    (.bgColorRgb term bgR bgG bgB)
     (.moveTo term x y char)))
 
 (defn fov [character]
@@ -110,7 +109,8 @@
     (->> level
          (viewable-coords character)
          (map get-in-level)
-         (run! #(draw-block term %)))))
+         (run! #(draw-block term %))
+         )))
 
 (defn show-map-with-buffer [term level character]
   (let [
@@ -134,9 +134,13 @@
 
 
 (defn show-screen [term level character]
+  (.clear term)
+
   (if (-> (.-support term) (aget "trueColor"))
     (show-map-with-buffer term level character)
     (show-map-direct term level character))
+
+  (show-map-direct term level character)
 
   (doto term
     (.color256    7)
