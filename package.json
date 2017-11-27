@@ -40,6 +40,7 @@
     "terminal-kit": "^1.8.12"
   },
   "devDependencies": {
+    "bluebird": "^3.5.1",
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
   }
