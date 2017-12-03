@@ -88,6 +88,10 @@ coffee-script@1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.10.0.tgz#12938bcf9be1948fa006f92e0c4c9e81705108c0"
 
+coffeescript@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.0.2.tgz#065702a484b46194b8c7eb08481e6d4dc38b87c9"
+
 combined-stream@^1.0.5, combined-stream@~1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.5.tgz#938370a57b4a51dea2c77c15d5c5fdf895164009"

@@ -1,17 +1,21 @@
 (ns dnd.core
   (:require
     [ cljs.nodejs :as nodejs ]
-    [ cljs.core.async :refer [chan close! <! timeout] ]
+    [ cljs.core.async :refer [timeout] ]
+    [ promesa.core :as p
+     :refer [await]
+     :refer-macros [alet]]
+    [ promesa.async-cljs :refer-macros [async] ]
     [ dnd.level ]
     [ dnd.character :as character]
+    [ dnd.character.random-name :refer [generate-name] ]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
-    [com.rpl.specter :as s
+    [ com.rpl.specter :as s
      :refer [FIRST]
-     :refer-macros [select transform setval]]
-    )
+     :refer-macros [select transform setval] ])
   (:require-macros
-    [cljs.core.async.macros :as m :refer [go-loop]]))
+   [cljs.core.async.macros :as m :refer [go-loop]]))
 
 (nodejs/enable-util-print!)
 
@@ -20,11 +24,13 @@
 
 (declare term)
 
-(defonce character (atom
-                     (assoc character/base-character
-                            :isPlayer true
-                            :description "hero"
-                            )))
+(def character (atom
+                 (assoc character/base-character
+                        :isPlayer true
+                        :description "hero")))
+
+(async (swap! character assoc :name (await (generate-name))))
+
 
 (defonce level
   (let [{:keys [x y]} @character

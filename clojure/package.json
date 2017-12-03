@@ -8,10 +8,11 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "bresenham-js": "^0.0.0",
+    "coffeescript": "^2.0.3",
     "color": "^2.0.0",
-    "name-this-color": "latest",
     "lodash": "^4.17.4",
     "moongoose": "0.0.5",
+    "name-this-color": "latest",
     "terminal-kit": "^1.10.2"
   },
   "devDependencies": {

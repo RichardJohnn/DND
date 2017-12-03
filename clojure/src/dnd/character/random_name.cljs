@@ -6,11 +6,14 @@
              :refer-macros [alet]]
             ))
 
-;; (def promisify (.-promisify (nodejs/require "bluebird")))
-(def name-generator (nodejs/require "../../../lib/character/name-generator.js"))
+(nodejs/require "coffeescript/register")
+
+;(def promisify (.-promisify (nodejs/require "bluebird")))
+(def name-generator
+  (nodejs/require "../../../lib/character/name-generator.coffee"))
 
 (defn generate-name []
-  (alet [samples #js ["all" "apple" "art"]
+  (alet [samples #js ["Hags" "Chune" "Vibe"]
          length 1
          [[result]] (<! (name-generator samples length))]
         (aget result "name")))
