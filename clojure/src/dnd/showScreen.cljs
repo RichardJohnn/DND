@@ -106,11 +106,11 @@
 
 (defn show-map-direct [term level character]
   (let [get-in-level (partial get-in level)]
+    (.clear term)
     (->> level
          (viewable-coords character)
          (map get-in-level)
-         (run! #(draw-block term %))
-         )))
+         (run! #(draw-block term %)))))
 
 (defn show-map-with-buffer [term level character]
   (let [
@@ -134,13 +134,10 @@
 
 
 (defn show-screen [term level character]
-  (.clear term)
 
   (if (-> (.-support term) (aget "trueColor"))
     (show-map-with-buffer term level character)
     (show-map-direct term level character))
-
-  (show-map-direct term level character)
 
   (doto term
     (.color256    7)
