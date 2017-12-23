@@ -12,20 +12,20 @@
 (def emit
   (.bind (.-emit emitter) emitter))
 
-(defn keyHandler [level character key matches data]
+(defn keyHandler [term level character key matches data]
   (case key
-    "UP"    (emit "move"  level character  0 -1)
-    "DOWN"  (emit "move"  level character  0  1)
-    "LEFT"  (emit "move"  level character -1  0)
-    "RIGHT" (emit "move"  level character  1  0)
-    "g"     (emit "get"   level character)
-    "d"     (emit "drop"  level character)
-    "i"     (emit "inventory" character)
+    "UP"    (emit "move"  term level character  0 -1)
+    "DOWN"  (emit "move"  term level character  0  1)
+    "LEFT"  (emit "move"  term level character -1  0)
+    "RIGHT" (emit "move"  term level character  1  0)
+    "g"     (emit "get"   term level character)
+    "d"     (emit "drop"  term level character)
+    "i"     (emit "inventory" term character)
     "ESCAPE" (.exit js/process)
     "default"))
 
 (defn HandleCharacterKeys [term level character]
-  (let [handler (partial keyHandler level character)]
+  (let [handler (partial keyHandler term level character)]
     (.on term "key" (throttle handler 100))))
 
 (defn RemoveHandleCharacterKeys [term]

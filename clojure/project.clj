@@ -2,23 +2,26 @@
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
 
-  :min-lein-version "2.5.3"
+  :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.170"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.9.946"]
+                 [funcool/promesa "1.9.0"]
                  [com.rpl/specter "1.0.3"]
                  ]
 
   ;:jvm-opts ["-Dclojure.server.repl={:port 5555 :accept clojure.core.server/repl}"]
 
-  :plugins [[lein-cljsbuild "1.1.1"]
-            [lein-figwheel "0.5.0-2"]]
+  :plugins [[lein-cljsbuild "1.1.7"]
+            [lein-figwheel "0.5.13"]]
 
   :source-paths ["src"]
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.2"]
-                                  [figwheel-sidecar "0.5.8"]]}}
-  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.13"]
+                                  [com.cemerick/piggieback "0.2.2"]]
+                   :source-paths ["src" "dev"]
+                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+                   }}
 
 
   :clean-targets ["server.js"

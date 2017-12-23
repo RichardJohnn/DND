@@ -74,18 +74,17 @@
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}
           char)))
 
-
 (defn draw-block [term block]
   (let [{:keys [x y solid inhabitants color visible]} block
         has-inhabitant (boolean (seq inhabitants))
-        fgcolor (or (:color (first inhabitants)) [0 0 0])
+        [fgR fgG fgB] (or (:color (first inhabitants)) [0 0 0])
         bgcolor (.rgb COLOR color)
-        bgcolor (color-to-vec bgcolor)
+        [bgR bgG bgB] (color-to-vec bgcolor)
         char    (if has-inhabitant
                   (:char (first inhabitants))
                   (if solid "▒" " "))]
-    (apply (.-colorRgb term) fgcolor)
-    (apply (.-bgColorRgb term) bgcolor)
+    (.colorRgb term fgR fgG fgB)
+    (.bgColorRgb term bgR bgG bgB)
     (.moveTo term x y char)))
 
 (defn fov [character]
@@ -107,6 +106,7 @@
 
 (defn show-map-direct [term level character]
   (let [get-in-level (partial get-in level)]
+    (.clear term)
     (->> level
          (viewable-coords character)
          (map get-in-level)
@@ -134,6 +134,7 @@
 
 
 (defn show-screen [term level character]
+
   (if (-> (.-support term) (aget "trueColor"))
     (show-map-with-buffer term level character)
     (show-map-direct term level character))
@@ -147,14 +148,16 @@
     ;(.moveTo 0 (inc height) "got some text down below\n\n")
     (.moveTo 0 (+ 10 height))))
 
-(defn inventory-selected [error response]
-  (if error
-    (println "oh crap")
-    (println "you stare at" (.-selectedText response))
-    ))
+(defn inventory-selected [term error response]
+  (.moveTo term 0 (inc height)
+           (if error
+             "oh crap!"
+             (str "you stare at " (.-selectedText response)))))
 
 (defn show-inventory [term character]
-  (let [descriptions (->> character :inventory (map :colorful-description))]
+  (let [descriptions (->> character :inventory (map :colorful-description))
+        inventory-selected (partial inventory-selected term)
+        ]
     (when-not (empty? descriptions)
       (.gridMenu term (clj->js descriptions) inventory-selected))
     ))
