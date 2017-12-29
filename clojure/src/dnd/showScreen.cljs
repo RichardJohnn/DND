@@ -4,6 +4,7 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
+
 (defonce terminal (nodejs/require "terminal-kit"))
 
 (defonce bresenham (nodejs/require "bresenham-js"))
@@ -131,6 +132,27 @@
 
     (.draw buffer #js {:delta true})))
 
+;;raycasting
+(def focal-length 1)
+(def spacing 1)
+
+;(defn cast [])
+
+(defn draw-column [column ray angle level]
+  (let [left (.floor js/Math (* column spacing))
+        width (.ceil js/Math spacing)
+        hit -1]
+    (while )
+  )
+
+(defn show-first-person [term level character]
+  (map (fn [column]
+         (let [x (/ column (- width 0.5))
+               angle (.atan2 js/Math x focal-length)
+               ray (cast character angle)]
+           (draw-column column ray angle level)))
+       (range width)))
+
 
 
 (defn show-screen [term level character]
@@ -147,6 +169,7 @@
     (.moveTo (+ 2 width) 3 (str "trueColor: " (.. term -support -trueColor)))
     ;(.moveTo 0 (inc height) "got some text down below\n\n")
     (.moveTo 0 (+ 10 height))))
+
 
 (defn inventory-selected [term error response]
   (.moveTo term 0 (inc height)
