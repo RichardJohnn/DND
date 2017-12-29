@@ -22,6 +22,8 @@
 (defonce tkit (nodejs/require "terminal-kit"))
 (defonce net (nodejs/require "net"))
 
+(defonce clients (atom []))
+
 (defn make-character []
   (atom
     (assoc character/base-character
@@ -48,7 +50,7 @@
         new-y (+ y dy)
         _character (character/redirect-character! character dx dy)
         [_level _character] (character/move-character! level character new-x new-y)]
-    (when-not (nil? term) (show-screen term character))
+    ;; (show-screen term character)
     ))
 
 (defn get-handler [term level character]
@@ -96,7 +98,8 @@
                           )]
 
         (apply function args)
-        (swap! queue pop)))
+        (swap! queue pop)
+        (run! #(let [{term :term character :character} %] (show-screen term character)) @clients)))
 
     (<! (timeout 100))
     (recur queue))
@@ -112,7 +115,6 @@
                      ;(.send client string)
                      ;))))
 
-(defonce clients (atom []))
 
 (defn kick-it [client]
   (let [{:keys [term character]} client]
