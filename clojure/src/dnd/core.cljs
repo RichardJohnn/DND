@@ -129,11 +129,12 @@
                        (fn [client]
                          (let [term (.createTerminal tkit
                                                      #js {:stdin client :stdout client})
+                               character (make-character)
                                new-client {:client client
                                            :term   term
-                                           :character (make-character) } ]
+                                           :character character } ]
                            (swap! clients conj new-client)
-                           ;(async (swap! character assoc :name (await (generate-name))))
+                           (async (swap! character assoc :name (await (generate-name))))
                            (kick-it new-client))))
     (.listen 2323)))
 
