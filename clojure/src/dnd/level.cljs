@@ -12,7 +12,7 @@
             :visible true
             })
 
-(def width  100)
+(def width  40)
 (def height 40)
 
 (defn make-block [x y]
