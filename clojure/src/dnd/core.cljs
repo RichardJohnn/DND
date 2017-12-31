@@ -76,7 +76,7 @@
   (doto term
     (.clear)
     (.applicationKeypad)
-    ;; (.grabInput #js { :mouse "button" :focus true })
+    (.grabInput #js { :mouse "button" :focus true })
     )
 
   (.on client "end" #(let [character-name (:name @character)
