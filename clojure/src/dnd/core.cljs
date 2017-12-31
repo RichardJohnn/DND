@@ -66,12 +66,30 @@
 (defn pusher! [& arguments]
   (swap! queue conj arguments))
 
-(defn setup [term character]
+(defonce clients (atom []))
+
+(defn remove-client [client]
+  (swap! clients (fn [fucks]
+                   (remove #(= client (:client %)) fucks))))
+
+(defn setup [term character client]
   (doto term
     (.clear)
     (.applicationKeypad)
-    (.hideCursor)
-    (.grabInput #js { :mouse "button" :focus true }))
+    ;; (.grabInput #js { :mouse "button" :focus true })
+    )
+
+  (.on client "end" #(let [character-name (:name @character)
+                          string (str "Character '" character-name "' has left the building")]
+                        (remove-client client)
+                        (println string)
+                        ))
+
+  ;(.on term "key"  #((let [string (str "key was " %)]
+                     ;(println string)
+                     ;(.send client string)
+                     ;)))
+
 
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" (partial pusher! "move"))
@@ -102,23 +120,11 @@
     (recur queue))
   )
 
-;(defn herp [term client]
-  ;(.on term "key"  #((let [string (str "key was " %)]
-                     ;(println string)
-                     ;(.send client string)
-                     ;)))
-  ;(.on term "data" #((let [string (str "data was " %)]
-                     ;(println string)
-                     ;(.send client string)
-                     ;))))
-
-(defonce clients (atom []))
 
 (defn kick-it [client]
-  (let [{:keys [term character]} client]
-    (prn term)
+  (let [{:keys [term character client]} client]
     (teardown term)
-    (setup term character)
+    (setup term character client)
     (show-screen term character)
     (popper! queue)))
 
@@ -131,7 +137,10 @@
                                            :term   term
                                            :character (make-character) } ]
                            (swap! clients conj new-client)
-                           ;(async (swap! character assoc :name (await (generate-name))))
+                           (async
+                             (let [dat-name (await (generate-name))]
+                               (prn (str dat-name " has joined the fray."))
+                               (swap! (:character new-client) assoc :name dat-name)))
                            (kick-it new-client))))
     (.listen 2323)))
 
