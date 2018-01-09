@@ -40,6 +40,13 @@
 
 (defn show-screen [term character] (show/show-screen term @level @character))
 
+(defn display-client [client]
+  (let [name (get-in client {:client :name})]
+    name))
+
+(defn list-clients [clients] 
+  (run! display-client clients)
+
 (defn show-inventory [term character] (show/show-inventory term @character))
 
 (defn move-handler [term level character dx dy]
@@ -77,6 +84,7 @@
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
+  (.on keyboard/emitter "clients" (partial pusher! "clients"))
   (.on keyboard/emitter "inventory" (partial pusher! "inventory")))
 
 (defn teardown [term]
@@ -93,6 +101,7 @@
                           "get"  get-handler
                           "drop" drop-handler
                           "inventory" show-inventory
+                          "clients" show-clients
                           )]
 
         (apply function args)

@@ -21,6 +21,7 @@
     "g"     (emit "get"   term level character)
     "d"     (emit "drop"  term level character)
     "i"     (emit "inventory" term character)
+    "TAB"   (emit "clients" term)
     "ESCAPE" (.exit js/process)
     "default"))
 
