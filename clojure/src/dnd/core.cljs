@@ -44,7 +44,8 @@
 
 (defn show-screen [term character] (show/show-screen term @level @character))
 
-(defn show-inventory [term character] (show/show-inventory term @character))
+(defn show-inventory [term character]
+  (show/show-inventory term character))
 
 (defn move-handler [term level character dx dy]
   (let [{:keys [x y]} @character
@@ -56,14 +57,12 @@
     ))
 
 (defn get-handler [term level character]
-  (let [[_level _character] (character/get-item! level character)]
-    (show-screen term character)))
+  (let [[_level _character] (character/get-item! level character)]))
 
 (defn drop-handler [term level character]
   (let [lastItem (last (:inventory @character))]
     (when-not (nil? lastItem)
-      (character/drop-item! level character lastItem)
-      (show-screen term character))))
+      (character/drop-item! level character lastItem))))
 
 (def queue (atom #queue []))
 
