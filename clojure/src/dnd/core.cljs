@@ -7,6 +7,7 @@
      :refer-macros [alet]]
     [ promesa.async-cljs :refer-macros [async] ]
     [ dnd.level ]
+    [ dnd.db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
     [ dnd.showScreen :as show ]
@@ -21,6 +22,8 @@
 
 (defonce tkit (nodejs/require "terminal-kit"))
 (defonce net (nodejs/require "net"))
+
+(defonce clients (atom []))
 
 (defn make-character []
   (atom
@@ -48,7 +51,7 @@
         new-y (+ y dy)
         _character (character/redirect-character! character dx dy)
         [_level _character] (character/move-character! level character new-x new-y)]
-    (when-not (nil? term) (show-screen term character))
+    ;; (show-screen term character)
     ))
 
 (defn get-handler [term level character]
@@ -114,12 +117,12 @@
                           )]
 
         (apply function args)
-        (swap! queue pop)))
+        (swap! queue pop)
+        (run! #(let [{term :term character :character} %] (show-screen term character)) @clients)))
 
     (<! (timeout 100))
     (recur queue))
   )
-
 
 (defn kick-it [client]
   (let [{:keys [term character client]} client]
@@ -133,9 +136,10 @@
                        (fn [client]
                          (let [term (.createTerminal tkit
                                                      #js {:stdin client :stdout client})
+                               character (make-character)
                                new-client {:client client
                                            :term   term
-                                           :character (make-character) } ]
+                                           :character character } ]
                            (swap! clients conj new-client)
                            (async
                              (let [dat-name (await (generate-name))]
