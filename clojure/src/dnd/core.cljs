@@ -82,11 +82,12 @@
     (.grabInput #js { :mouse "button" :focus true })
     )
 
-  (.on client "end" #(let [character-name (:name @character)
-                          string (str "Character '" character-name "' has left the building")]
+  (when client
+    (.on client "end" #(let [character-name (:name @character)
+                             string (str "Character '" character-name "' has left the building")]
                         (remove-client client)
                         (println string)
-                        ))
+                        )))
 
   ;(.on term "key"  #((let [string (str "key was " %)]
                      ;(println string)
@@ -148,13 +149,25 @@
                            (kick-it new-client))))
     (.listen 2323)))
 
+(defn create-local []
+  (prn "ok")
+  (let [term (.-terminal tkit)
+        character (make-character)
+        new-client {:term      term
+                    :character character } ]
+    (swap! clients conj new-client)
+    (async
+      (let [dat-name (await (generate-name))]
+        (prn (str dat-name " has joined the fray."))
+        (swap! (:character new-client) assoc :name dat-name)))
+    (kick-it new-client)))
+
 (defn -main []
   (if (-> (last process.argv)
           (= "server"))
     (create-server)
-    (do
-      (def term (.-terminal tkit))
-      (kick-it term))))
+    (create-local)
+    ))
 
 
 (set! *main-cli-fn* -main)
