@@ -30,6 +30,7 @@
     (assoc character/base-character
            :char "@"
            :isPlayer true
+           :inventory [(character/egg)]
            :description "hero")))
 
 (def level (atom (dnd.level/make-level)))
