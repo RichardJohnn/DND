@@ -48,13 +48,13 @@
   (show/show-inventory term character))
 
 (defn move-handler [term level character dx dy]
-  (let [{:keys [x y]} @character
-        new-x (+ x dx)
-        new-y (+ y dy)
-        _character (character/redirect-character! character dx dy)
-        [_level _character] (character/move-character! level character new-x new-y)]
-    ;; (show-screen term character)
-    ))
+  (if-let [can-move (:can-move @character)]
+    (let [{:keys [x y]} @character
+          new-x (+ x dx)
+          new-y (+ y dy)
+          _character (character/redirect-character! character dx dy)
+          [_level _character] (character/move-character! level character new-x new-y)]
+      ) ))
 
 (defn get-handler [term level character]
   (let [[_level _character] (character/get-item! level character)]))

@@ -9,7 +9,8 @@
                          :inventory []
                          :description "shit"
                          :view-distance 10
-                         :direction "n" })
+                         :direction "n"
+                         :can-move true })
 
 (defn is-character [inhabitant] (:isPlayer inhabitant))
 
