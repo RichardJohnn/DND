@@ -135,12 +135,17 @@
 (defn create-server []
   (doto (.createServer net
                        (fn [client]
-                         (let [term (.createTerminal tkit
-                                                     #js {:stdin client :stdout client})
+                         (let [term (doto (.createTerminal tkit
+                                                      #js {:stdin   client
+                                                           :stdout  client
+                                                           :generic "xterm-truecolor"
+                                                           :appId   "xterm-truecolor" })
+                                      (aset "width" 80)
+                                      (aset "height" 25))
                                character (make-character)
-                               new-client {:client client
-                                           :term   term
-                                           :character character } ]
+                               new-client {:client    client
+                                           :term      term
+                                           :character character}]
                            (swap! clients conj new-client)
                            (async
                              (let [dat-name (await (generate-name))]
