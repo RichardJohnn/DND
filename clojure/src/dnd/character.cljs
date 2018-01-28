@@ -63,10 +63,12 @@
       "can't walk through solid blocks")
     "can't walk off the board"))
 
+(defn push-inhabitant-to-block [item block]
+  (assoc block :inhabitants (conj (:inhabitants block) item)))
 
 (defn push-inhabitant! [level x y item]
-  (let [{target-inhabitants :inhabitants} (get-in @level [x y])
-        update-habs #(assoc % :inhabitants (conj target-inhabitants item))
+  (let [block (get-in @level [x y])
+        update-habs (partial push-inhabitant-to-block item)
         updated-level (swap! level update-in [x y] update-habs)]
     level))
 
@@ -74,12 +76,9 @@
   (let [{:keys [x y inventory]} @character
         {old-inhabitants :inhabitants} (get-in @level [x y])
         gotten-inhabitant (first (remove is-character old-inhabitants))
-
-
         updated-character (when-not (nil? gotten-inhabitant)
                             (swap! character assoc :inventory
                                    (conj inventory gotten-inhabitant)))
-
         matcher #(= gotten-inhabitant %)
         remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
         updated-level (swap! level update-in [x y] remove-inhabitant)]
