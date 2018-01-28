@@ -47,8 +47,7 @@
 
 (defn tree [char description]
   (let [rgb (rand-rgb-vec)
-        name-of-color (color-name rgb)
-        description "a very nice tree"]
+        name-of-color (color-name rgb) ]
     (assoc base-character
            :char char
            :color rgb
@@ -56,6 +55,32 @@
            :description description
            :colorful-description (str description ", " name-of-color)
            )))
+;TODO: dry these items
+(defn pickaxe []
+  (let [rgb [200 200 200]
+        name-of-color (color-name rgb)
+        description "a trusty pickaxe" ]
+   (assoc base-character
+          :char "⛏️"
+          :color rgb
+          :color-name name-of-color
+          :description description
+          :colorful-description (str description ", " name-of-color)
+          )))
+
+(defn sword []
+  (let [rgb [200 200 200]
+        name-of-color (color-name rgb)
+        description "a pointy sword" ]
+   (assoc base-character
+          :char "🗡"
+          :color rgb
+          :color-name name-of-color
+          :description description
+          :colorful-description (str description ", " name-of-color)
+          )))
+
+
 
 (defn redirect-character! [character dx dy]
   (swap! character assoc :direction (character-direction dx dy)))
