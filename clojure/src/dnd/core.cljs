@@ -139,8 +139,8 @@
                                                            :stdout  client
                                                            :generic "xterm-truecolor"
                                                            :appId   "xterm-truecolor" })
-                                      (aset "width" 80)
-                                      (aset "height" 25))
+                                      (aset "width" 120)
+                                      (aset "height" 45))
                                character (make-character)
                                new-client {:client    client
                                            :term      term
@@ -154,7 +154,6 @@
     (.listen 2323)))
 
 (defn create-local []
-  (prn "ok")
   (let [term (.-terminal tkit)
         character (make-character)
         new-client {:term      term
