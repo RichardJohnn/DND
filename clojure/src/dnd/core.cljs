@@ -10,6 +10,7 @@
     [ dnd.db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
+    [ dnd.actionHandlers :refer [attack-handler] ]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     [ com.rpl.specter :as s
@@ -54,7 +55,7 @@
           new-y (+ y dy)
           _character (character/redirect-character! character dx dy)
           [_level _character] (character/move-character! level character new-x new-y)]
-      ) ))
+      )))
 
 (defn get-handler [term level character]
   (let [[_level _character] (character/get-item! level character)]))
@@ -89,16 +90,11 @@
                         (println string)
                         )))
 
-  ;(.on term "key"  #((let [string (str "key was " %)]
-                     ;(println string)
-                     ;(.send client string)
-                     ;)))
-
-
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
+  (.on keyboard/emitter "attack" (partial pusher! "attack"))
   (.on keyboard/emitter "inventory" (partial pusher! "inventory")))
 
 (defn teardown [term]
@@ -114,10 +110,13 @@
                           "move" move-handler
                           "get"  get-handler
                           "drop" drop-handler
+                          "attack" attack-handler
                           "inventory" show-inventory
-                          )]
-
-        (apply function args)
+                          )
+            [_ _level] (apply function args)
+            ]
+        (if _level
+          (reset! level _level))
         (swap! queue pop)
         (run! #(let [{term :term character :character} %] (show-screen term character)) @clients)))
 
