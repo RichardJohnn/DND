@@ -19,6 +19,18 @@
     (if (= dy 1) "s" "n")
     (if (= dx 1) "e" "w")))
 
+(defn direction->offset [direction]
+  (case direction
+    "n" [0 -1]
+    "s" [0  1]
+    "w" [-1 0]
+    "e" [1  0]))
+
+(defn character->offset [character]
+  (-> character
+      :direction
+      direction->offset))
+
 (defn rand-rgb-vec [] (vec (repeatedly 3 #(rand-int 256))))
 
 (defn egg []
