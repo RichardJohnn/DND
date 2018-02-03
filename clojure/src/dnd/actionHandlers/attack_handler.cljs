@@ -6,7 +6,8 @@
 (defn attack-block [block]
   (let [{solid :solid} block]
   (if solid
-    (assoc block :solid false))))
+    (assoc block :solid false)
+    block)))
 
 (defn attack-handler [term level character]
   (if-let [can-move (:can-move @character)]
