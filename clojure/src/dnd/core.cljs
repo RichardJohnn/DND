@@ -31,7 +31,7 @@
     (assoc character/base-character
            :char "@"
            :isPlayer true
-           :inventory [(character/egg)]
+           :inventory (repeatedly 2 character/rocks)
            :description "hero")))
 
 (def level (atom (dnd.level/make-level)))

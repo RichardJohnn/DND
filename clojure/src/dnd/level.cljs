@@ -18,7 +18,7 @@
 (defn make-block [x y]
   (let [solid (> (rand) 0.9)
         has-inhabitant (> (rand) .9)
-        has-tree (> (rand) .5)
+        has-tree (> (rand) .1)
         items [egg pickaxe item/sword]
         inhabitants (if solid
                       [(item/rocks)]
