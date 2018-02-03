@@ -64,11 +64,14 @@
         [r g b] fgcolor
         bgcolor (color-to-vec (.rgb COLOR color))
         [bgR bgG bgB] bgcolor
-        char    (if-not visible
-                  " "
-                  (if has-inhabitant
-                    (:char (first inhabitants))
-                    (if solid "▒" " ")))]
+        char (if-not visible
+               " "
+               (if solid
+                 "▒"
+                 (if has-inhabitant
+                   (:char (first inhabitants))
+                   " ")
+                 ))]
     (.put buffer
           #js {:x x :y y
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}

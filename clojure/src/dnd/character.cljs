@@ -87,8 +87,12 @@
       "can't walk through solid blocks")
     "can't walk off the board"))
 
+(defn makes-solid [item]
+  (-> item :char (= rocks-han)))
+
 (defn push-inhabitant-to-block [item block]
-  (assoc block :inhabitants (conj (:inhabitants block) item)))
+  (let [block (if (makes-solid item) (assoc block :solid true :color "#b1b7b7") block)]
+    (assoc block :inhabitants (conj (:inhabitants block) item))))
 
 (defn push-inhabitant! [level x y item]
   (let [block (get-in @level [x y])
