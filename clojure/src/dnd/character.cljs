@@ -52,7 +52,6 @@
                 (rand-rgb-vec)
                 "a happy tree"))
 
-;TODO: dry these items
 (defn pickaxe [] (item-maker
                    "⛏️"
                    [200 200 200]
