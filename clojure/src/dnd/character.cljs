@@ -1,5 +1,6 @@
 (ns dnd.character
-  (:require [dnd.color :refer [color-name]]))
+  (:require [dnd.color :refer [color-name]]
+            [dnd.util :refer [coin-flip]]))
 
 (defonce base-character {:char "🐰"
                          :isPlayer false
@@ -21,10 +22,10 @@
 
 (defn direction->offset [direction]
   (case direction
-    "n" [0 -1]
-    "s" [0  1]
-    "w" [-1 0]
-    "e" [1  0]))
+    "n" [ 0 -1]
+    "s" [ 0  1]
+    "w" [-1  0]
+    "e" [ 1  0]))
 
 (defn character->offset [character]
   (-> character
@@ -33,52 +34,38 @@
 
 (defn rand-rgb-vec [] (vec (repeatedly 3 #(rand-int 256))))
 
-(defn egg []
-  (let [rgb-vec (rand-rgb-vec)
-        name-of-color (color-name rgb-vec)
-        description "a nice egg"]
-    (assoc base-character
-           :char "●"
-           :color rgb-vec
-           :color-name name-of-color
-           :description description
-           :colorful-description (str description ", " name-of-color)
-           )))
-
-(defn tree [char description]
-  (let [rgb (rand-rgb-vec)
-        name-of-color (color-name rgb) ]
+(defn item-maker [char color description]
+  (let [name-of-color (color-name color)]
     (assoc base-character
            :char char
-           :color rgb
+           :color color
            :color-name name-of-color
            :description description
            :colorful-description (str description ", " name-of-color)
            )))
-;TODO: dry these items
-(defn pickaxe []
-  (let [rgb [200 200 200]
-        name-of-color (color-name rgb)
-        description "a trusty pickaxe" ]
-   (assoc base-character
-          :char "⛏️"
-          :color rgb
-          :color-name name-of-color
-          :description description
-          :colorful-description (str description ", " name-of-color)
-          )))
 
-(defn sword []
-  (let [rgb [200 200 200]
-        name-of-color (color-name rgb)
-        description "a pointy sword" ]
-   (assoc base-character
-          :char "🗡"
-          :color rgb
-          :color-name name-of-color
-          :description description
-          :colorful-description (str description ", " name-of-color)
-          )))
+
+(defn egg [] (item-maker "●" (rand-rgb-vec)  "a nice egg"))
+
+(defn tree [] (item-maker
+                (coin-flip "🎄" "🌲 ")
+                (rand-rgb-vec)
+                "a happy tree"))
+
+;TODO: dry these items
+(defn pickaxe [] (item-maker
+                   "⛏️"
+                   [200 200 200]
+                   "a trusty pickaxe"))
+
+(defn sword [] (item-maker
+                 "🗡"
+                 [200 200 200]
+                 "a pointy sword"))
+
+(def rocks-han "䂟")
+(defn rocks []
+  (item-maker rocks-han [130 130 130] "rubble"))
 
 
 
