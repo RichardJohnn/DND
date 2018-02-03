@@ -37,6 +37,7 @@
 (defn item-maker [char color description]
   (let [name-of-color (color-name color)]
     (assoc base-character
+           :id (random-uuid)
            :char char
            :color color
            :color-name name-of-color
@@ -65,7 +66,6 @@
 (def rocks-han "䂟")
 (defn rocks []
   (item-maker rocks-han [130 130 130] "rubble"))
-
 
 
 (defn redirect-character! [character dx dy]
