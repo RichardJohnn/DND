@@ -16,11 +16,11 @@
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.13"]]
 
-  :source-paths ["src"]
+  :source-paths ["src" "test"]
 
   :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.13"]
                                   [com.cemerick/piggieback "0.2.2"]]
-                   :source-paths ["src" "dev"]
+                   :source-paths ["src" "dev" "test"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    }}
 
@@ -30,7 +30,7 @@
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src"]
+              :source-paths ["src" "test"]
               :figwheel true
               :compiler {
                 :main dnd.core
