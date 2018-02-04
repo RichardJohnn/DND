@@ -1,5 +1,5 @@
 (ns dnd.core-test
-  (:require [cljs.test :refer-macros  [deftest is testing]]
+  (:require [cljs.test :refer-macros  [deftest is]]
             [dnd.character]))
 
 (deftest test-numbers
@@ -8,5 +8,3 @@
 (deftest test-strings
   (is  (= "yo" "yo")))
 
-(deftest test-things
-  (is  (= (dnd.character/character-direction 0 1) "s")))

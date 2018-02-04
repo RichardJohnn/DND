@@ -1,5 +1,5 @@
 (ns dnd.character-test
-  (:require [cljs.test :refer-macros  [deftest is testing]]
+  (:require [cljs.test :refer-macros  [deftest is]]
             [dnd.character]))
 
 (deftest test-things
