@@ -28,22 +28,34 @@
   :clean-targets ["server.js"
                   "target"]
 
+	:hooks  [leiningen.cljsbuild]
+
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src" "test"]
               :figwheel true
               :compiler {
-                :main dnd.core
-                :output-to "target/server_dev/dnd.js"
-                :output-dir "target/server_dev"
-                :target :nodejs
-                :asset-path "target/server_dev"
-                :optimizations :none
-                :source-map true}}
+                         :main dnd.core
+                         :output-to "target/server_dev/dnd.js"
+                         :output-dir "target/server_dev"
+                         :asset-path "target/server_dev"
+                         :optimizations :none
+                         :target :nodejs
+                         :source-map true}}
+             {:id "test"
+              :source-paths ["src" "test"]
+              :compiler {
+                         :main dnd.test-runner
+                         :output-to "target/server_dev/test.js"
+                         :output-dir "target/server_dev/test"
+                         :asset-path "target/server_dev/test"
+                         :optimizations :none
+                         :target :nodejs
+                         :source-map true}}
              {:id "prod"
               :source-paths ["src"]
               :compiler {
-                :output-to "server.js"
-                :output-dir "target/server_prod"
-                :target :nodejs
-                :optimizations :simple}}]})
+                         :output-to "server.js"
+                         :output-dir "target/server_prod"
+                         :target :nodejs
+                         :optimizations :simple}}]})
