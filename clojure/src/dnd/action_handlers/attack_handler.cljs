@@ -1,4 +1,4 @@
-(ns dnd.actionHandlers
+(ns dnd.action-handlers
   (:require
     [dnd.character :as character]
     ))

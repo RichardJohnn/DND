@@ -10,7 +10,7 @@
     [ dnd.db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
-    [ dnd.actionHandlers :refer [attack-handler] ]
+    [ dnd.action-handlers :refer [attack-handler] ]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     [ com.rpl.specter :as s
