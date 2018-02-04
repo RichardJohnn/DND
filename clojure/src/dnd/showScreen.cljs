@@ -118,11 +118,8 @@
 (defn show-map-with-buffer [term level character]
   (let [
         buffer ((.. terminal -ScreenBufferHD -create)
-                #js {
-                     :dst term
-                     :x 0
-                     :y 0
-                     :width width
+                #js {:dst    term
+                     :width  width
                      :height height
                      })
         get-in-level (partial get-in level)]
