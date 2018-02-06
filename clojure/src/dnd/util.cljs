@@ -9,3 +9,9 @@
         (<= len i)         nil,
         (= item (get v i)) i,
         :else              (recur (inc i ))))))
+
+(defn coin-flip [heads-expr tails-expr]
+  (if (> (rand) .5)
+    heads-expr
+    tails-expr))
+

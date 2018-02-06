@@ -20,6 +20,7 @@
     "RIGHT" (emit "move"  term level character  1  0)
     "g"     (emit "get"   term level character)
     "d"     (emit "drop"  term level character)
+    "a"     (emit "attack" term level character)
     "i"     (emit "inventory" term character)
     "TAB"   (emit "clients" term)
     "ESCAPE" (.exit js/process)

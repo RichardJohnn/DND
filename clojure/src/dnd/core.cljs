@@ -10,6 +10,7 @@
     [ dnd.db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
+    [ dnd.actionHandlers :refer [attack-handler] ]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     [ com.rpl.specter :as s
@@ -30,6 +31,7 @@
     (assoc character/base-character
            :char "@"
            :isPlayer true
+           :inventory (repeatedly 2 character/rocks)
            :description "hero")))
 
 (def level (atom (dnd.level/make-level)))
@@ -50,44 +52,57 @@
 (defn list-clients [clients] 
   (run! display-client clients)
 
-(defn show-inventory [term character] (show/show-inventory term @character))
+(defn show-inventory [term character]
+  (show/show-inventory term character))
 
 (defn move-handler [term level character dx dy]
-  (let [{:keys [x y]} @character
-        new-x (+ x dx)
-        new-y (+ y dy)
-        _character (character/redirect-character! character dx dy)
-        [_level _character] (character/move-character! level character new-x new-y)]
-    ;; (show-screen term character)
-    ))
+  (if-let [can-move (:can-move @character)]
+    (let [{:keys [x y]} @character
+          new-x (+ x dx)
+          new-y (+ y dy)
+          _character (character/redirect-character! character dx dy)
+          [_level _character] (character/move-character! level character new-x new-y)]
+      )))
 
 (defn get-handler [term level character]
-  (let [[_level _character] (character/get-item! level character)]
-    (show-screen term character)))
+  (let [[_level _character] (character/get-item! level character)]))
 
 (defn drop-handler [term level character]
   (let [lastItem (last (:inventory @character))]
     (when-not (nil? lastItem)
-      (character/drop-item! level character lastItem)
-      (show-screen term character))))
+      (character/drop-item! level character lastItem))))
 
 (def queue (atom #queue []))
 
 (defn pusher! [& arguments]
   (swap! queue conj arguments))
 
-(defn setup [term character]
+(defonce clients (atom []))
+
+(defn remove-client [client]
+  (swap! clients (fn [fucks]
+                   (remove #(= client (:client %)) fucks))))
+
+(defn setup [term character client]
   (doto term
     (.clear)
     (.applicationKeypad)
-    (.hideCursor)
-    (.grabInput #js { :mouse "button" :focus true }))
+    (.grabInput #js { :mouse "button" :focus true })
+    )
+
+  (when client
+    (.on client "end" #(let [character-name (:name @character)
+                             string (str "Character '" character-name "' has left the building")]
+                        (remove-client client)
+                        (println string)
+                        )))
 
   (keyboard/HandleCharacterKeys term level character)
   (.on keyboard/emitter "move" (partial pusher! "move"))
   (.on keyboard/emitter "get"  (partial pusher! "get"))
   (.on keyboard/emitter "drop" (partial pusher! "drop"))
   (.on keyboard/emitter "clients" (partial pusher! "clients"))
+  (.on keyboard/emitter "attack" (partial pusher! "attack"))
   (.on keyboard/emitter "inventory" (partial pusher! "inventory")))
 
 (defn teardown [term]
@@ -103,11 +118,17 @@
                           "move" move-handler
                           "get"  get-handler
                           "drop" drop-handler
+                          "attack" attack-handler
                           "inventory" show-inventory
                           "clients" show-clients
                           )]
 
         (apply function args)
+                          )
+            [_ _level] (apply function args)
+            ]
+        (if _level
+          (reset! level _level))
         (swap! queue pop)
         (run! #(let [{term :term character :character} %] (show-screen term character)) @clients)))
 
@@ -115,46 +136,53 @@
     (recur queue))
   )
 
-;(defn herp [term client]
-  ;(.on term "key"  #((let [string (str "key was " %)]
-                     ;(println string)
-                     ;(.send client string)
-                     ;)))
-  ;(.on term "data" #((let [string (str "data was " %)]
-                     ;(println string)
-                     ;(.send client string)
-                     ;))))
-
-
 (defn kick-it [client]
-  (let [{:keys [term character]} client]
-    (prn term)
+  (let [{:keys [term character client]} client]
     (teardown term)
-    (setup term character)
+    (setup term character client)
     (show-screen term character)
     (popper! queue)))
 
 (defn create-server []
   (doto (.createServer net
                        (fn [client]
-                         (let [term (.createTerminal tkit
-                                                     #js {:stdin client :stdout client})
+                         (let [term (doto (.createTerminal tkit
+                                                      #js {:stdin   client
+                                                           :stdout  client
+                                                           :generic "xterm-truecolor"
+                                                           :appId   "xterm-truecolor" })
+                                      (aset "width" 120)
+                                      (aset "height" 45))
                                character (make-character)
-                               new-client {:client client
-                                           :term   term
-                                           :character character } ]
+                               new-client {:client    client
+                                           :term      term
+                                           :character character}]
                            (swap! clients conj new-client)
-                           (async (swap! character assoc :name (await (generate-name))))
+                           (async
+                             (let [dat-name (await (generate-name))]
+                               (prn (str dat-name " has joined the fray."))
+                               (swap! (:character new-client) assoc :name dat-name)))
                            (kick-it new-client))))
     (.listen 2323)))
+
+(defn create-local []
+  (let [term (.-terminal tkit)
+        character (make-character)
+        new-client {:term      term
+                    :character character } ]
+    (swap! clients conj new-client)
+    (async
+      (let [dat-name (await (generate-name))]
+        (prn (str dat-name " has joined the fray."))
+        (swap! (:character new-client) assoc :name dat-name)))
+    (kick-it new-client)))
 
 (defn -main []
   (if (-> (last process.argv)
           (= "server"))
     (create-server)
-    (do
-      (def term (.-terminal tkit))
-      (kick-it term))))
+    (create-local)
+    ))
 
 
 (set! *main-cli-fn* -main)

@@ -64,11 +64,14 @@
         [r g b] fgcolor
         bgcolor (color-to-vec (.rgb COLOR color))
         [bgR bgG bgB] bgcolor
-        char    (if-not visible
-                  " "
-                  (if has-inhabitant
-                    (:char (first inhabitants))
-                    (if solid "▒" " ")))]
+        char (if-not visible
+               " "
+               (if solid
+                 "▒"
+                 (if has-inhabitant
+                   (:char (first inhabitants))
+                   " ")
+                 ))]
     (.put buffer
           #js {:x x :y y
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}
@@ -148,17 +151,23 @@
     ;(.moveTo 0 (inc height) "got some text down below\n\n")
     (.moveTo 0 (+ 10 height))))
 
-(defn inventory-selected [term error response]
+(defn inventory-selected [term character error response]
+  (swap! character assoc :can-move true)
   (.moveTo term 0 (inc height)
            (if error
              "oh crap!"
-             (str "you stare at " (.-selectedText response)))))
+             (str "you stare at " (.-selectedText response)))
+           )
+   ;(.moveTo term 0 0
+      ;(.drawImage term "" #js {:shrink #js {:width 100 :height 150}}))
+  )
+
 
 (defn show-inventory [term character]
-  (let [descriptions (->> character :inventory (map :colorful-description))
-        inventory-selected (partial inventory-selected term)
-        ]
+  (let [descriptions (->> @character :inventory (map :colorful-description))
+        inventory-selected (partial inventory-selected term character)]
     (when-not (empty? descriptions)
+      (swap! character assoc :can-move false)
       (.gridMenu term (clj->js descriptions) inventory-selected))
     ))
 

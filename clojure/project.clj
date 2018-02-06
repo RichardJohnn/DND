@@ -11,6 +11,7 @@
                  ]
 
   ;:jvm-opts ["-Dclojure.server.repl={:port 5555 :accept clojure.core.server/repl}"]
+  :jvm-opts ["--add-modules" "java.xml.bind"]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.13"]]

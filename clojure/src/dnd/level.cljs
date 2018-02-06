@@ -1,6 +1,6 @@
 (ns dnd.level
    (:require [cljs.nodejs :as nodejs]
-             [dnd.character :refer [base-character tree egg]]
+             [dnd.character :as item :refer [base-character tree egg pickaxe]]
              [dnd.color :refer [COLOR color-to-array color-name]]
              ))
 
@@ -12,21 +12,23 @@
             :visible true
             })
 
-(def width  100)
-(def height 40)
+(def width  40)
+(def height 30)
 
 (defn make-block [x y]
   (let [solid (> (rand) 0.9)
-        walkable (not solid)
         has-inhabitant (> (rand) .9)
-        has-tree (> (rand) .5)
-        inhabitants (if (and (not solid) has-inhabitant)
-                      (if has-tree
-                        [(tree "🌳" "happy")]
-                        [(egg)])
-                      [])
+        has-tree (> (rand) .1)
+        items [egg pickaxe item/sword]
+        inhabitants (if solid
+                      [(item/rocks)]
+                      (if has-inhabitant
+                        (if has-tree
+                          [(tree)]
+                          [((rand-nth items))])
+                        []))
         color (color-to-array
-                (if-not walkable
+                (if solid
                   (COLOR "#b1b7b7")
                   (if (> (rand) 0.9)
                     (COLOR "#0078ff")
