@@ -120,13 +120,8 @@
                           "drop" drop-handler
                           "attack" attack-handler
                           "inventory" show-inventory
-                          "clients" show-clients
-                          )]
-
-        (apply function args)
-                          )
-            [_ _level] (apply function args)
-            ]
+                          "clients" show-clients)
+	    [_ _level] (apply function args) ]
         (if _level
           (reset! level _level))
         (swap! queue pop)
@@ -136,38 +131,8 @@
     (recur queue))
   )
 
-(defn kick-it [client]
-  (let [{:keys [term character client]} client]
-    (teardown term)
-    (setup term character client)
-    (show-screen term character)
-    (popper! queue)))
-
-(defn create-server []
-  (doto (.createServer net
-                       (fn [client]
-                         (let [term (doto (.createTerminal tkit
-                                                      #js {:stdin   client
-                                                           :stdout  client
-                                                           :generic "xterm-truecolor"
-                                                           :appId   "xterm-truecolor" })
-                                      (aset "width" 120)
-                                      (aset "height" 45))
-                               character (make-character)
-                               new-client {:client    client
-                                           :term      term
-                                           :character character}]
-                           (swap! clients conj new-client)
-                           (async
-                             (let [dat-name (await (generate-name))]
-                               (prn (str dat-name " has joined the fray."))
-                               (swap! (:character new-client) assoc :name dat-name)))
-                           (kick-it new-client))))
-    (.listen 2323)))
-
-(defn create-local []
-  (let [term (.-terminal tkit)
-        character (make-character)
+(defn create [term]
+  (let [character (make-character)
         new-client {:term      term
                     :character character } ]
     (swap! clients conj new-client)
@@ -177,16 +142,42 @@
         (swap! (:character new-client) assoc :name dat-name)))
     (kick-it new-client)))
 
+(defn kick-it [client]
+  (let [{:keys [term character client]} client]
+    (teardown term)
+    (setup term character client)
+    (show-screen term character)
+    (popper! queue)))
+
+(defn create-local-term []
+  (.-terminal tkit))
+
+(defn create-remote-term [client]
+ (doto (.createTerminal tkit #js {:stdin   client
+	:stdout  client
+	:generic "xterm-truecolor"
+	:appId   "xterm-truecolor" })
+  (aset "width" 120)
+  (aset "height" 45)))
+
+(defn create-remote []
+  (-> (create-remote-term)
+      (create))
+
+(defn create-server []
+  (doto (.createServer net create-remote)
+    (.listen 2323)))
+
+(defn create-local []
+  (-> (create-local-term)
+      (create))
+
 (defn -main []
   (if (-> (last process.argv)
           (= "server"))
     (create-server)
-    (create-local)
-    ))
+    (create-local)))
 
-
-(set! *main-cli-fn* -main)
-
-(run! #(kick-it %) @clients)
+(set! *main-cli-fn* -main) (run! #(kick-it %) @clients)
 
 ;(when term (kick-it term))
