@@ -7,7 +7,7 @@
      :refer-macros [alet]]
     [ promesa.async-cljs :refer-macros [async] ]
     [ dnd.level ]
-    [ dnd.db ]
+    [ dnd.db :as db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
     [ dnd.action-handlers :refer [attack-handler] ]
