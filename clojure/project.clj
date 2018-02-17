@@ -28,7 +28,7 @@
   :clean-targets ["server.js"
                   "target"]
 
-	:hooks  [leiningen.cljsbuild]
+  :hooks  [leiningen.cljsbuild]
 
   :cljsbuild {
     :builds [{:id "dev"
