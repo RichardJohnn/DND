@@ -64,11 +64,14 @@
         [r g b] fgcolor
         bgcolor (color-to-vec (.rgb COLOR color))
         [bgR bgG bgB] bgcolor
-        char    (if-not visible
-                  " "
-                  (if has-inhabitant
-                    (:char (first inhabitants))
-                    (if solid "▒" " ")))]
+        char (if-not visible
+               " "
+               (if solid
+                 "▒"
+                 (if has-inhabitant
+                   (:char (first inhabitants))
+                   " ")
+                 ))]
     (.put buffer
           #js {:x x :y y
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}
@@ -115,11 +118,8 @@
 (defn show-map-with-buffer [term level character]
   (let [
         buffer ((.. terminal -ScreenBufferHD -create)
-                #js {
-                     :dst term
-                     :x 0
-                     :y 0
-                     :width width
+                #js {:dst    term
+                     :width  width
                      :height height
                      })
         get-in-level (partial get-in level)]
@@ -153,7 +153,12 @@
   (.moveTo term 0 (inc height)
            (if error
              "oh crap!"
-             (str "you stare at " (.-selectedText response)))))
+             (str "you stare at " (.-selectedText response)))
+           )
+   ;(.moveTo term 0 0
+      ;(.drawImage term "" #js {:shrink #js {:width 100 :height 150}}))
+  )
+
 
 (defn show-inventory [term character]
   (let [descriptions (->> @character :inventory (map :colorful-description))
