@@ -93,29 +93,29 @@
   (let [block (if (makes-solid item) (assoc block :solid true :color "#b1b7b7") block)]
     (assoc block :inhabitants (conj (:inhabitants block) item))))
 
-(defn push-inhabitant! [level x y item]
-  (let [block (get-in @level [x y])
-        update-habs (partial push-inhabitant-to-block item)
-        updated-level (swap! level update-in [x y] update-habs)]
-    level))
+(defn push-inhabitant [level x y item]
+  (let [block (get-in level [x y])
+        update-habs (partial push-inhabitant-to-block item)]
+    (update-in level [x y] update-habs)))
 
-(defn get-item! [level character]
-  (let [{:keys [x y inventory]} @character
-        {old-inhabitants :inhabitants} (get-in @level [x y])
+(defn get-item [level character]
+  (let [{:keys [x y inventory]} character
+        {old-inhabitants :inhabitants} (get-in level [x y])
         gotten-inhabitant (first (remove is-character old-inhabitants))
-        updated-character (when-not (nil? gotten-inhabitant)
-                            (swap! character assoc :inventory
+        updated-character (if (nil? gotten-inhabitant)
+                            character
+                            (assoc character :inventory
                                    (conj inventory gotten-inhabitant)))
         matcher #(= gotten-inhabitant %)
         remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
-        updated-level (swap! level update-in [x y] remove-inhabitant)]
-    [level character]))
+        updated-level (update-in level [x y] remove-inhabitant)]
+    [updated-level updated-character]))
 
-(defn drop-item! [level character item]
-  (let [{:keys [x y inventory]} @character
+(defn drop-item [level character item]
+  (let [{:keys [x y inventory]} character
         matcher #(= item %)
-        updated-character (swap! character assoc :inventory (remove matcher inventory))
-        updated-level (push-inhabitant! level x y item)
-        ]))
+        updated-character (assoc character :inventory (remove matcher inventory))
+        updated-level (push-inhabitant level x y item)]
+    [updated-level updated-character]))
 
 
