@@ -68,23 +68,23 @@
   (item-maker rocks-han [130 130 130] "rubble"))
 
 
-(defn redirect-character! [character dx dy]
-  (swap! character assoc :direction (character-direction dx dy)))
+(defn redirect-character [character dx dy]
+  (assoc character :direction (character-direction dx dy)))
 
-(defn move-character! [level character dx dy]
-  (if-let [target-block (get-in @level [dx dy])]
+(defn move-character [level character dx dy]
+  (if-let [target-block (get-in level [dx dy])]
     (if-let [not-solid (not (:solid target-block))]
-      (let [{ox :x oy :y} @character
-            {old-inhabitants :inhabitants} (get-in @level [ox oy])
-            remove-character #(assoc % :inhabitants (remove is-character old-inhabitants))
-            level-without-character (swap! level update-in [ox oy] remove-character)
+      (let [{ox :x oy :y} character
+            {old-inhabitants :inhabitants} (get-in level [ox oy])
+            level-without-character (update-in level [ox oy]
+                                               #(assoc % :inhabitants (remove is-character old-inhabitants)))
             target-inhabitants (:inhabitants target-block)
-            updated-character (swap! character assoc :x dx :y dy)
+            updated-character (assoc character :x dx :y dy)
             update-habs #(assoc % :inhabitants (conj target-inhabitants updated-character))
-            updated-level (swap! level update-in [dx dy] update-habs)]
-        [level character])
-      "can't walk through solid blocks")
-    "can't walk off the board"))
+            updated-level (update-in level-without-character [dx dy] update-habs)]
+        [updated-level updated-character])
+      [level character]) ; can't walk through solid blocks
+    [level character])) ; can't walk off the board
 
 (defn makes-solid [item]
   (-> item :char (= rocks-han)))

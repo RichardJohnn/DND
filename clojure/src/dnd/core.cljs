@@ -89,6 +89,7 @@
     (when-let [next-action (peek @queue)]
       (let [action-name (first next-action)
             args        (rest next-action)
+            character   (nth args 2)
             function    (case action-name
                           "move" move-handler
                           "get"  get-handler
@@ -96,12 +97,12 @@
                           "attack" attack-handler
                           "inventory" show-inventory
                           )
-            [_ _level] (apply function args)
-            ]
-        (if _level
-          (reset! level _level))
+            [new-level new-character] (apply function args)]
+
+        (if new-level     (reset! level new-level))
+        (if new-character (reset! character new-character))
         (swap! queue pop)
-        (run! #(let [{term :term character :character} %] (show-screen term character)) @clients)))
+        (run! #(let [{:keys [term character]} %] (show-screen term character)) @clients)))
 
     (<! (timeout 100))
     (recur queue))
