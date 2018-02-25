@@ -161,11 +161,11 @@
            )
   character)
 
-(defn show-inventory [term character]
+(defn show-inventory [term level character]
   (let [descriptions (->> character :inventory (map :colorful-description))
         inventory-selected (partial inventory-selected term character)]
     (when-not (empty? descriptions)
       (assoc character :can-move false)
       (.gridMenu term (clj->js descriptions) inventory-selected))
-    character))
+    [level character]))
 

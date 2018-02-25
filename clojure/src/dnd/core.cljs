@@ -45,8 +45,8 @@
 
 (defn show-screen [term character] (show/show-screen term @level @character))
 
-(defn show-inventory [term character]
-  (show/show-inventory term character))
+(defn show-inventory [term level character]
+  (show/show-inventory term @level @character))
 
 (def queue (atom #queue []))
 

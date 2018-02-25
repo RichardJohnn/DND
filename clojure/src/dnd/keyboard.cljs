@@ -21,7 +21,7 @@
     "g"     (emit "get"   term level character)
     "d"     (emit "drop"  term level character)
     "a"     (emit "attack" term level character)
-    "i"     (emit "inventory" term character)
+    "i"     (emit "inventory" term level character)
     "ESCAPE" (.exit js/process)
     "default"))
 
