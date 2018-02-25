@@ -10,7 +10,7 @@
     [ dnd.db :as db ]
     [ dnd.character :as character]
     [ dnd.character.random-name :refer [generate-name] ]
-    [ dnd.action-handlers :refer [attack-handler] ]
+    [ dnd.action-handlers :refer [attack-handler move-handler get-handler drop-handler] ]
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     [ com.rpl.specter :as s
@@ -47,23 +47,6 @@
 
 (defn show-inventory [term character]
   (show/show-inventory term character))
-
-(defn move-handler [term level character dx dy]
-  (if-let [can-move (:can-move @character)]
-    (let [{:keys [x y]} @character
-          new-x (+ x dx)
-          new-y (+ y dy)
-          _character (character/redirect-character! character dx dy)
-          [_level _character] (character/move-character! level character new-x new-y)]
-      )))
-
-(defn get-handler [term level character]
-  (let [[_level _character] (character/get-item! level character)]))
-
-(defn drop-handler [term level character]
-  (let [lastItem (last (:inventory @character))]
-    (when-not (nil? lastItem)
-      (character/drop-item! level character lastItem))))
 
 (def queue (atom #queue []))
 
