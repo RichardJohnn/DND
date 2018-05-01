@@ -4,8 +4,8 @@
 
 (defonce base-character {:char "🐰"
                          :isPlayer false
-                         :x 3
-                         :y 2
+                         :x 0
+                         :y 0
                          :hp 20
                          :inventory []
                          :description "shit"
@@ -47,6 +47,14 @@
 
 
 (defn egg [] (item-maker "●" (rand-rgb-vec)  "a nice egg"))
+
+(defn person [] (assoc
+                  (item-maker
+                    "☺"
+                    (rand-rgb-vec)
+                    "a friendly person")
+                  :brain #{}
+                  ))
 
 (defn tree [] (item-maker
                 (coin-flip "🎄" "🌲 ")

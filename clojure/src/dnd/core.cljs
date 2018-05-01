@@ -9,6 +9,7 @@
     [ dnd.level ]
     [ dnd.db :as db ]
     [ dnd.character :as character]
+    [ dnd.brain :as brain]
     [ dnd.character.random-name :refer [generate-name] ]
     [ dnd.action-handlers :refer [attack-handler move-handler get-handler drop-handler] ]
     [ dnd.showScreen :as show ]
@@ -34,12 +35,18 @@
            :inventory (repeatedly 2 character/rocks)
            :description "hero")))
 
-(def level (atom (dnd.level/make-level)))
+(defonce level (atom (dnd.level/make-level)))
+
+(def person (atom (character/person)))
+
+(reset! level
+        (character/push-inhabitant @level 0 0 @person))
 
 (def select-values (comp vals select-keys))
 (defn character-offset [character dx dy]
   (map #(reduce + %)
        (map vector [dx dy] (select-values character [:x :y]))))
+
 (defn look [character dx dy]
   (get-in @level (character-offset character dx dy)))
 

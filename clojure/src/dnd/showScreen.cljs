@@ -132,7 +132,6 @@
     (.draw buffer #js {:delta true})))
 
 
-
 (defn show-screen [term level character]
 
   (if (-> (.-support term) (aget "trueColor"))
