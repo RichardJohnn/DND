@@ -30,7 +30,11 @@
 
 (defn load []
   (async
-    (->
-      (await (levels))
-      (.findOne #js {}))))
+    (-> (await (levels))
+      (.findOne #js {})
+      await
+      (js->clj :keywordize-keys true)
+      :blocks
+      )))
+
 
