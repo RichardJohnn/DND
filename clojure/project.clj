@@ -14,12 +14,12 @@
   :jvm-opts ["--add-modules" "java.xml.bind"]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.13"]]
+            [lein-figwheel "0.5.16-SNAPSHOT"]]
 
   :source-paths ["src" "test"]
 
-  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.13"]
-                                  [com.cemerick/piggieback "0.2.2"]]
+  :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.15"]
+                                  [cider/piggieback "0.3.1"]]
                    :source-paths ["src" "dev" "test"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    }}
