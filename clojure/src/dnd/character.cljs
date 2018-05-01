@@ -13,7 +13,7 @@
                          :direction "n"
                          :can-move true })
 
-(defn is-character [inhabitant] (:isPlayer inhabitant))
+(defn match-id [id] #(= (% :id) id))
 
 (defn character-direction [dx dy]
   (if (= dx 0)
@@ -67,17 +67,16 @@
 (defn rocks []
   (item-maker rocks-han [130 130 130] "rubble"))
 
-
 (defn redirect-character [character dx dy]
   (assoc character :direction (character-direction dx dy)))
 
 (defn move-character [level character dx dy]
   (if-let [target-block (get-in level [dx dy])]
     (if-let [not-solid (not (:solid target-block))]
-      (let [{ox :x oy :y} character
+      (let [{ox :x oy :y id :id} character
             {old-inhabitants :inhabitants} (get-in level [ox oy])
             level-without-character (update-in level [ox oy]
-                                               #(assoc % :inhabitants (remove is-character old-inhabitants)))
+                                               #(assoc % :inhabitants (remove (match-id id) old-inhabitants)))
             target-inhabitants (:inhabitants target-block)
             updated-character (assoc character :x dx :y dy)
             update-habs #(assoc % :inhabitants (conj target-inhabitants updated-character))
@@ -99,9 +98,9 @@
     (update-in level [x y] update-habs)))
 
 (defn get-item [level character]
-  (let [{:keys [x y inventory]} character
+  (let [{:keys [id x y inventory]} character
         {old-inhabitants :inhabitants} (get-in level [x y])
-        gotten-inhabitant (first (remove is-character old-inhabitants))
+        gotten-inhabitant (first (remove (match-id id) old-inhabitants))
         updated-character (if (nil? gotten-inhabitant)
                             character
                             (assoc character :inventory
