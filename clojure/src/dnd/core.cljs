@@ -15,7 +15,7 @@
     [ dnd.showScreen :as show ]
     [ dnd.keyboard :as keyboard ]
     [ com.rpl.specter :as s
-     :refer [FIRST]
+     :refer [FIRST ALL]
      :refer-macros [select transform setval] ])
   (:require-macros
    [cljs.core.async.macros :as m :refer [go-loop]]))
@@ -26,6 +26,7 @@
 (defonce net (nodejs/require "net"))
 
 (defonce clients (atom []))
+(defonce level (atom []))
 
 (defn make-character []
   (atom
@@ -34,13 +35,6 @@
            :is-player true
            :inventory (repeatedly 2 character/rocks)
            :description "hero")))
-
-(defonce level (atom (dnd.level/make-level)))
-
-(def person (atom (character/person)))
-
-(reset! level
-        (character/push-inhabitant @level 0 0 @person))
 
 (def select-values (comp vals select-keys))
 (defn character-offset [character dx dy]
@@ -157,11 +151,13 @@
     (kick-it new-client)))
 
 (defn -main []
-  (if (-> (last process.argv)
-          (= "server"))
-    (create-server)
-    (create-local)
-    ))
+  (async
+    (await (db/load level))
+    (if (-> (last process.argv)
+            (= "server"))
+      (create-server)
+      (create-local)
+      )))
 
 
 (set! *main-cli-fn* -main)

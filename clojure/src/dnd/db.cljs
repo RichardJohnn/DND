@@ -1,10 +1,13 @@
 (ns dnd.db
   (:require [cljs.nodejs :as nodejs]
             [ promesa.core :as p
-             :refer [await]
+             :refer [await then]
              :rename {await <!}
              :refer-macros [alet]]
             [ promesa.async-cljs :refer-macros [async] ]
+            [ com.rpl.specter :as s
+             :refer [ALL]
+             :refer-macros [transform] ]
             ))
 
 (def promisify (.-promisifyAll (nodejs/require "bluebird")))
@@ -26,15 +29,20 @@
   (async
     (->
       (await (levels))
-      (.findOneAndUpdate #js {} #js {"$set" #js {:blocks (clj->js level)}}))))
+      (.findOneAndUpdate #js {} #js {"$set" #js {:blocks (clj->js @level)}}))))
 
-(defn load []
+(defn load [level]
   (async
     (-> (await (levels))
       (.findOne #js {})
       await
       (js->clj :keywordize-keys true)
       :blocks
+      (then (fn [blocks]
+              (->> blocks
+                (transform [ALL ALL :color] clj->js)
+                (reset! level))
+              ))
       )))
 
 
