@@ -3,7 +3,7 @@
             [dnd.util :refer [coin-flip]]))
 
 (defonce base-character {:char "🐰"
-                         :isPlayer false
+                         :is-player false
                          :x 0
                          :y 0
                          :hp 20

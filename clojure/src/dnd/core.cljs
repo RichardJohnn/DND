@@ -31,7 +31,7 @@
   (atom
     (assoc character/base-character
            :char "@"
-           :isPlayer true
+           :is-player true
            :inventory (repeatedly 2 character/rocks)
            :description "hero")))
 
