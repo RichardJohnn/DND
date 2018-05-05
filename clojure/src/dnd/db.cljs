@@ -29,7 +29,11 @@
   (async
     (->
       (await (levels))
-      (.findOneAndUpdate #js {} #js {"$set" #js {:blocks (clj->js @level)}}))))
+      (.findOneAndUpdate
+        #js {}
+        #js {"$set" #js {:blocks (clj->js @level)}}
+        #js {:upsert true})
+      (.then #(prn "Level saved.")))))
 
 (defn load []
   (async
