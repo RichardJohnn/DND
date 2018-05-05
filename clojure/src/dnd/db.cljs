@@ -31,18 +31,13 @@
       (await (levels))
       (.findOneAndUpdate #js {} #js {"$set" #js {:blocks (clj->js @level)}}))))
 
-(defn load [level]
+(defn load []
   (async
     (-> (await (levels))
       (.findOne #js {})
       await
       (js->clj :keywordize-keys true)
       :blocks
-      (then (fn [blocks]
-              (->> blocks
-                (transform [ALL ALL :color] clj->js)
-                (reset! level))
-              ))
-      )))
+      p/promise)))
 
 
