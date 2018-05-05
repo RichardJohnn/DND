@@ -57,7 +57,7 @@
                   ))
 
 (defn tree [] (item-maker
-                (coin-flip "🎄" "🌲 ")
+                (coin-flip "🎄" "🌲")
                 (rand-rgb-vec)
                 "a happy tree"))
 
