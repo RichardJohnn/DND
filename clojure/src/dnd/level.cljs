@@ -1,7 +1,7 @@
 (ns dnd.level
    (:require [cljs.nodejs :as nodejs]
              [dnd.character :as item :refer [base-character tree egg pickaxe]]
-             [dnd.color :refer [COLOR color-name]]
+             [dnd.color :refer [COLOR color-name color-to-array]]
              ))
 
 (def block {
@@ -27,11 +27,12 @@
                           [(tree)]
                           [((rand-nth items))])
                         []))
-        color (if solid
-                (COLOR "#b1b7b7")
-                (if (> (rand) 0.9)
-                  (COLOR "#0078ff")
-                  (COLOR "#0cce0c")))]
+        color (color-to-array
+                (if solid
+                  (COLOR "#b1b7b7")
+                  (if (> (rand) 0.9)
+                    (COLOR "#0078ff")
+                    (COLOR "#0cce0c"))))]
     (assoc block
            :x x
            :y y
@@ -47,7 +48,7 @@
   ([width height]
    (let [row-array (range width)
          col-array (range height)]
-    (vec
-      (for [x row-array]
-        (vec (map #(make-block x %) col-array)))))))
+     (vec
+       (for [x row-array]
+         (vec (map #(make-block x %) col-array)))))))
 

@@ -3,10 +3,10 @@
     [ cljs.nodejs :as nodejs ]
     [ cljs.core.async :refer [timeout] ]
     [ promesa.core :as p
-     :refer [await]
+     :refer [await then]
      :refer-macros [alet]]
     [ promesa.async-cljs :refer-macros [async] ]
-    [ dnd.level ]
+    [ dnd.level :refer [make-level]]
     [ dnd.db :as db ]
     [ dnd.character :as character]
     [ dnd.brain :as brain]
@@ -152,12 +152,16 @@
 
 (defn -main []
   (async
-    (await (db/load level))
+    (await
+      (-> (await (db/load))
+          (then (fn [blocks]
+                  (reset! level (if (nil? blocks)
+                                  (make-level)
+                                  (transform [ALL ALL :color] clj->js blocks)))))))
     (if (-> (last process.argv)
             (= "server"))
       (create-server)
-      (create-local)
-      )))
+      (create-local))))
 
 
 (set! *main-cli-fn* -main)
