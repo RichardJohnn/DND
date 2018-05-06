@@ -25,5 +25,4 @@
         height (-> level first count)
         x (contain x width)
         y (contain y height)]
-    (prn "get in" x y)
     (get-in level [x y])))
