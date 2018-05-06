@@ -4,35 +4,38 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
+(def window-width width)
+(def window-height height)
+
 (defonce terminal (nodejs/require "terminal-kit"))
 
 (defonce bresenham (nodejs/require "bresenham-js"))
 
 (defn end-points [character]
   (let [{:keys [x y]} character
-        _width  (inc width)
-        _height (inc height)
+        _width  (inc window-width)
+        _height (inc window-height)
         zw (range 0 _width)
         zh (range 0 _height)
         ziy (range 0 y)
         zix (range 0 x)
-        ++yh (range (inc y) height)
-        ++xw (range (inc x) width)
+        ++yh (range (inc y) window-height)
+        ++xw (range (inc x) window-width)
         opposite-wall (vec (case (:direction character)
            "n" (map #(vec [% 0])      zw)
-           "s" (map #(vec [% height]) zw)
+           "s" (map #(vec [% window-height]) zw)
            "w" (map #(vec [0 %])      zh)
-           "e" (map #(vec [width %])  zh)))
+           "e" (map #(vec [window-width %])  zh)))
         adjenct-wall (vec (case (:direction character)
            "n" (map #(vec [0 %])      ziy)
            "s" (map #(vec [0 %])      ++yh)
            "w" (map #(vec [% 0])      zix)
            "e" (map #(vec [% 0])      ++xw)))
         adjenct-wall2 (vec (case (:direction character)
-           "n" (map #(vec [width %])  ziy)
-           "s" (map #(vec [width %])  ++yh)
-           "w" (map #(vec [% height]) zix)
-           "e" (map #(vec [% height]) ++xw)))]
+           "n" (map #(vec [window-width %])  ziy)
+           "s" (map #(vec [window-width %])  ++yh)
+           "w" (map #(vec [% window-height]) zix)
+           "e" (map #(vec [% window-height]) ++xw)))]
     (concat opposite-wall adjenct-wall adjenct-wall2)
     ))
 
@@ -48,8 +51,8 @@
 
 (defn shorten-line [level line]
   (def shortened-line (take-while #(let [[x y] %
-                     x (min (dec width)  (max 0 x))
-                     y (min (dec height) (max 0 y))
+                     x (min (dec window-width)  (max 0 x))
+                     y (min (dec window-height) (max 0 y))
                      current-block (get-in level [x y])]
                                      (not (current-block :solid))
                                      ) line))
@@ -119,8 +122,8 @@
   (let [
         buffer ((.. terminal -ScreenBufferHD -create)
                 #js {:dst    term
-                     :width  width
-                     :height height
+                     :width  window-width
+                     :height window-height
                      })
         get-in-level (partial get-in level)]
 
@@ -141,11 +144,11 @@
   (doto term
     (.color256    7)
     (.bgColor256  0)
-    (.moveTo (+ 2 width) 1 (str "HP: " (:hp character)))
-    (.moveTo (+ 2 width) 2 (str "INV: " (count (:inventory character))))
-    (.moveTo (+ 2 width) 3 (str "trueColor: " (.. term -support -trueColor)))
+    (.moveTo (+ 2 window-width) 1 (str "HP: " (:hp character)))
+    (.moveTo (+ 2 window-width) 2 (str "INV: " (count (:inventory character))))
+    (.moveTo (+ 2 window-width) 3 (str "trueColor: " (.. term -support -trueColor)))
     ;(.moveTo 0 (inc height) "got some text down below\n\n")
-    (.moveTo 0 (+ 10 height))))
+    (.moveTo 0 (+ 10 window-height))))
 
 ;(.moveTo term 0 0
 ;(.drawImage term "" #js {:shrink #js {:width 100 :height 150}}))
@@ -153,7 +156,7 @@
 
 (defn inventory-selected [term character error response]
   (assoc character :can-move true)
-  (.moveTo term 0 (inc height)
+  (.moveTo term 0 (inc window-height)
            (if error
              "oh crap!"
              (str "you stare at " (.-selectedText response)))
