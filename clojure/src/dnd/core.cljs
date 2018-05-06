@@ -156,7 +156,8 @@
         (then (fn [blocks]
                 (reset! level (if (nil? blocks)
                                 (make-level)
-                                (transform [ALL ALL :color] clj->js blocks))))))))
+                                (transform [ALL ALL :color] clj->js blocks)))))
+        p/promise)))
 
 (defn -main []
   (async
