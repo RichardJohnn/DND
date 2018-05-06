@@ -150,14 +150,17 @@
         (swap! (:character new-client) assoc :name dat-name)))
     (kick-it new-client)))
 
+(defn get-level! []
+  (async
+    (-> (await (db/load))
+        (then (fn [blocks]
+                (reset! level (if (nil? blocks)
+                                (make-level)
+                                (transform [ALL ALL :color] clj->js blocks))))))))
+
 (defn -main []
   (async
-    (await
-      (-> (await (db/load))
-          (then (fn [blocks]
-                  (reset! level (if (nil? blocks)
-                                  (make-level)
-                                  (transform [ALL ALL :color] clj->js blocks)))))))
+    (await (get-level!))
     (if (-> (last process.argv)
             (= "server"))
       (create-server)
