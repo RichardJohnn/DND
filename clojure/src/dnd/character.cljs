@@ -1,6 +1,6 @@
 (ns dnd.character
   (:require [dnd.color :refer [color-name]]
-            [dnd.util :refer [coin-flip]]))
+            [dnd.util :refer [coin-flip get-block-with-wrap]]))
 
 (defonce base-character {:char "🐰"
                          :is-player false
@@ -79,19 +79,20 @@
   (assoc character :direction (character-direction dx dy)))
 
 (defn move-character [level character dx dy]
-  (if-let [target-block (get-in level [dx dy])]
+  (let [target-block (get-block-with-wrap level dx dy)]
     (if-let [not-solid (not (:solid target-block))]
-      (let [{ox :x oy :y id :id} character
+      (let [{new-x :x new-y :y} target-block
+            {ox :x oy :y id :id} character
             {old-inhabitants :inhabitants} (get-in level [ox oy])
             level-without-character (update-in level [ox oy]
                                                #(assoc % :inhabitants (remove (match-id id) old-inhabitants)))
             target-inhabitants (:inhabitants target-block)
-            updated-character (assoc character :x dx :y dy)
+            updated-character (assoc character :x new-x :y new-y)
             update-habs #(assoc % :inhabitants (conj target-inhabitants updated-character))
-            updated-level (update-in level-without-character [dx dy] update-habs)]
+            updated-level (update-in level-without-character [new-x new-y] update-habs)]
         [updated-level updated-character])
-      [level character]) ; can't walk through solid blocks
-    [level character])) ; can't walk off the board
+      [level character]))) ; can't walk through solid blocks
+
 
 (defn makes-solid [item]
   (-> item :char (= rocks-han)))

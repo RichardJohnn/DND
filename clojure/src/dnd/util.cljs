@@ -15,3 +15,15 @@
     heads-expr
     tails-expr))
 
+(defn contain [n limit]
+  (if (>= n limit)
+    (rem n limit)
+    (if (< n 0) (dec limit) n)))
+
+(defn get-block-with-wrap [level x y]
+  (let [width (count level)
+        height (-> level first count)
+        x (contain x width)
+        y (contain y height)]
+    (prn "get in" x y)
+    (get-in level [x y])))
