@@ -69,12 +69,10 @@
         [bgR bgG bgB] bgcolor
         char (if-not visible
                " "
-               (if solid
-                 "▒"
-                 (if has-inhabitant
-                   (:char (first inhabitants))
-                   " ")
-                 ))]
+               (if has-inhabitant
+                 (:char (first inhabitants))
+                 " ")
+               )]
     (.put buffer
           #js {:x x :y y
                :attr #js {:r r :g g :b b :bgR bgR :bgG bgG :bgB bgB}}

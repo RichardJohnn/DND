@@ -1,6 +1,7 @@
 (ns dnd.action-handlers
   (:require
-    [dnd.character :as character :refer [direction->offset]]))
+    [dnd.character :as character :refer [direction->offset]]
+    [dnd.util :refer [contain-x-and-y]]))
 
 (defn attack-block [block]
   (let [{solid :solid} block]
@@ -10,11 +11,10 @@
 
 (defn attack-handler [term level character]
   (if-let [can-move (:can-move @character)]
-    (let [{:keys [x y direction]} @character
+    (let [-level @level
+          {:keys [x y direction]} @character
           [dx dy] (direction->offset direction)
-          new-x (+ x dx)
-          new-y (+ y dy)
-          new-level (update-in @level [new-x new-y] attack-block)]
+          new-level (update-in -level (contain-x-and-y -level (+ x dx) (+ y dy)) attack-block)]
       [new-level @character])
     [level @character]))
 

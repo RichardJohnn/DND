@@ -2,7 +2,7 @@
    (:require [cljs.nodejs :as nodejs]
              [dnd.character :as item :refer [base-character tree egg pickaxe]]
              [dnd.color :refer [COLOR color-name color-to-array]]
-             ))
+             [dnd.util :refer [coin-flip]]))
 
 (def block {
             :x 0
@@ -16,19 +16,17 @@
 (def height 30)
 
 (defn make-block [x y]
-  (let [solid (> (rand) 0.9)
-        has-inhabitant (> (rand) .9)
-        has-tree (> (rand) .1)
+  (let [is-solid (> (rand) .4)
+        has-tree (coin-flip)
+        has-inhabitant (> (rand) .99)
         items [egg pickaxe item/sword]
-        inhabitants (if solid
-                      [(item/rocks)]
-                      (if has-inhabitant
-                        (if has-tree
-                          [(tree)]
-                          [((rand-nth items))])
-                        []))
+        inhabitant (if is-solid
+                      (if has-tree (tree) (item/stone))
+                      (when has-inhabitant
+                        ((rand-nth items))))
+        inhabitants (if inhabitant [inhabitant] [])
         color (color-to-array
-                (if solid
+                (if-not (nil? (:bg-color inhabitant))
                   (COLOR "#b1b7b7")
                   (if (> (rand) 0.9)
                     (COLOR "#0078ff")
@@ -36,7 +34,7 @@
     (assoc block
            :x x
            :y y
-           :solid solid
+           :solid is-solid
            :inhabitants inhabitants
            :color color
            )))

@@ -7,6 +7,7 @@
                          :x 0
                          :y 0
                          :hp 20
+                         :solid false
                          :inventory []
                          :description "shit"
                          :view-distance 10
@@ -34,46 +35,50 @@
 
 (defn rand-rgb-vec [] (vec (repeatedly 3 #(rand-int 256))))
 
-(defn item-maker [char color description]
-  (let [name-of-color (color-name color)]
-    (assoc base-character
+(defn item-maker [char color description & key-values]
+  (let [name-of-color (color-name color)
+        item (assoc base-character
            :id (random-uuid)
            :char char
            :color color
            :color-name name-of-color
            :description description
-           :colorful-description (str description ", " name-of-color)
-           )))
+           :colorful-description (str description ", " name-of-color))]
+    (if (nil? key-values)
+      item
+      (apply assoc item key-values))))
 
 
 (defn egg [] (item-maker "●" (rand-rgb-vec)  "a nice egg"))
 
-(defn person [] (assoc
-                  (item-maker
+(defn person [] (-> (item-maker
                     "☺"
                     (rand-rgb-vec)
                     "a friendly person")
-                  :brain #{}
-                  ))
+                  (assoc :brain #{})))
 
-(defn tree [] (item-maker
-                (coin-flip "🎄" "🌲")
-                (rand-rgb-vec)
-                "a happy tree"))
+(defn tree [] (-> (item-maker
+                    (coin-flip "O" "o")
+                    (rand-rgb-vec)
+                    "a happy tree")
+                  (assoc :solid true)))
 
 (defn pickaxe [] (item-maker
-                   "⛏️"
+                   "T"
                    [200 200 200]
                    "a trusty pickaxe"))
 
 (defn sword [] (item-maker
-                 "🗡"
+                 "†"
                  [200 200 200]
                  "a pointy sword"))
 
-(def rocks-han "䂟")
 (defn rocks []
-  (item-maker rocks-han [130 130 130] "rubble"))
+  (item-maker "☷" [130 130 130] "rubble"))
+
+(defn stone []
+  (-> (item-maker "▒" [130 130 130] "stone wall")
+      (assoc :solid true)))
 
 (defn redirect-character [character dx dy]
   (assoc character :direction (character-direction dx dy)))
@@ -95,7 +100,7 @@
 
 
 (defn makes-solid [item]
-  (-> item :char (= rocks-han)))
+  (:solid item))
 
 (defn push-inhabitant-to-block [item block]
   (let [block (if (makes-solid item) (assoc block :solid true :color "#b1b7b7") block)]
@@ -106,24 +111,39 @@
         update-habs (partial push-inhabitant-to-block item)]
     (update-in level [x y] update-habs)))
 
+(defn give-item
+  ([character item]
+   (assoc character :inventory
+          (conj (:inventory character) item)))
+
+  ;([level character item]
+   ;(let [{:keys [x y]} character
+         ;updated-character (give-item character item)]
+     ;updated-level (update-in level [x y])))
+  )
+
 (defn get-item [level character]
   (let [{:keys [id x y inventory]} character
         {old-inhabitants :inhabitants} (get-in level [x y])
         gotten-inhabitant (first (remove (match-id id) old-inhabitants))
         updated-character (if (nil? gotten-inhabitant)
                             character
-                            (assoc character :inventory
-                                   (conj inventory gotten-inhabitant)))
+                            (give-item character gotten-inhabitant))
         matcher #(= gotten-inhabitant %)
         remove-inhabitant #(assoc % :inhabitants (remove matcher old-inhabitants))
         updated-level (update-in level [x y] remove-inhabitant)]
     [updated-level updated-character]))
 
-(defn drop-item [level character item]
-  (let [{:keys [x y inventory]} character
-        matcher #(= item %)
-        updated-character (assoc character :inventory (remove matcher inventory))
-        updated-level (push-inhabitant level x y item)]
-    [updated-level updated-character]))
+(defn drop-item
+  ([character item]
+   (let [{:keys [inventory]} character
+         matcher #(= item %)
+         updated-character (assoc character :inventory (remove matcher inventory))]
+     updated-character))
 
+  ([level character item]
+   (let [{:keys [x y]} character
+         updated-character (drop-item character item)
+         updated-level (push-inhabitant level x y item)]
+     [updated-level updated-character])))
 

@@ -18,11 +18,15 @@
 
 (def url "mongodb://localhost/test")
 
-(defn levels []
+(def connection
   (async
     (->
      (await (.connect mongo url))
-     (.db "test")
+     (.db "dnd"))))
+
+(defn levels []
+  (async
+    (-> (await connection)
      (.collection "levels"))))
 
 (defn save [level]
