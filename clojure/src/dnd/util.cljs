@@ -37,3 +37,6 @@
 
 (defn give [character item])
 
+(defn has-some [block func]
+  (->> block :inhabitants (some func)))
+

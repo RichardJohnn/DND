@@ -1,6 +1,7 @@
 (ns dnd.showScreen
   (:require [cljs.nodejs :as nodejs]
             [dnd.level :refer [width height]]
+            [dnd.util :refer [has-some]]
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
@@ -36,8 +37,7 @@
            "s" (map #(vec [window-width %])  ++yh)
            "w" (map #(vec [% window-height]) zix)
            "e" (map #(vec [% window-height]) ++xw)))]
-    (concat opposite-wall adjenct-wall adjenct-wall2)
-    ))
+    (concat opposite-wall adjenct-wall adjenct-wall2)))
 
 (defn draw-x [term coords]
   (.color256    term 7)
@@ -51,17 +51,18 @@
 
 (defn shorten-line [level line]
   (def shortened-line (take-while #(let [[x y] %
-                     x (min (dec window-width)  (max 0 x))
-                     y (min (dec window-height) (max 0 y))
-                     current-block (get-in level [x y])]
-                                     (not (current-block :solid))
-                                     ) line))
+                                         x (min (dec window-width)  (max 0 x))
+                                         y (min (dec window-height) (max 0 y))
+                                         current-block (get-in level [x y])
+                                         solid  (has-some current-block :solid)]
+                                     (not solid))
+                                  line))
   (if (apply not= (map last [shortened-line line]))
     (concat shortened-line (list (nth line (count shortened-line))))
     line))
 
 (defn put-block [buffer block]
-  (let [{:keys [x y solid inhabitants color visible]} block
+  (let [{:keys [x y inhabitants color visible]} block
         has-inhabitant (boolean (seq inhabitants))
         fgcolor (or (:color (first inhabitants)) [0 0 0])
         [r g b] fgcolor
@@ -79,14 +80,14 @@
           char)))
 
 (defn draw-block [term block]
-  (let [{:keys [x y solid inhabitants color visible]} block
+  (let [{:keys [x y inhabitants color visible]} block
         has-inhabitant (boolean (seq inhabitants))
         [fgR fgG fgB] (or (:color (first inhabitants)) [0 0 0])
         bgcolor (.rgb COLOR color)
         [bgR bgG bgB] (color-to-vec bgcolor)
         char    (if has-inhabitant
                   (:char (first inhabitants))
-                  (if solid "▒" " "))]
+                  " ")]
     (.colorRgb term fgR fgG fgB)
     (.bgColorRgb term bgR bgG bgB)
     (.moveTo term x y char)))

@@ -8,7 +8,6 @@
             :x 0
             :y 0
             :inhabitants []
-            :solid false
             :visible true
             })
 
@@ -16,7 +15,7 @@
 (def height 30)
 
 (defn make-block [x y]
-  (let [is-solid (> (rand) .4)
+  (let [is-solid (> (rand) .9)
         has-tree (coin-flip)
         has-inhabitant (> (rand) .99)
         items [egg pickaxe item/sword]
@@ -34,7 +33,6 @@
     (assoc block
            :x x
            :y y
-           :solid is-solid
            :inhabitants inhabitants
            :color color
            )))

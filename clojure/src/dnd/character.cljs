@@ -1,6 +1,6 @@
 (ns dnd.character
   (:require [dnd.color :refer [color-name]]
-            [dnd.util :refer [coin-flip get-block-with-wrap]]))
+            [dnd.util :refer [coin-flip get-block-with-wrap has-some]]))
 
 (defonce base-character {:char "🐰"
                          :is-player false
@@ -85,7 +85,7 @@
 
 (defn move-character [level character dx dy]
   (let [target-block (get-block-with-wrap level dx dy)]
-    (if-let [not-solid (not (:solid target-block))]
+    (if-let [not-solid (not (has-some target-block :solid ))]
       (let [{new-x :x new-y :y} target-block
             {ox :x oy :y id :id} character
             {old-inhabitants :inhabitants} (get-in level [ox oy])
