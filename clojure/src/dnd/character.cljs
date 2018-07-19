@@ -54,14 +54,14 @@
 (defn person [] (-> (item-maker
                     "☺"
                     (rand-rgb-vec)
-                    "a friendly person")
-                  (assoc :brain #{})))
+                    "a friendly person"
+                    :brain #{})))
 
 (defn tree [] (-> (item-maker
                     (coin-flip "O" "o")
                     (rand-rgb-vec)
-                    "a happy tree")
-                  (assoc :solid true)))
+                    "a happy tree"
+                    :solid true)))
 
 (defn pickaxe [] (item-maker
                    "T"
@@ -77,8 +77,7 @@
   (item-maker "☷" [130 130 130] "rubble"))
 
 (defn stone []
-  (-> (item-maker "▒" [130 130 130] "stone wall")
-      (assoc :solid true)))
+  (-> (item-maker "▒" [130 130 130] "stone wall" :solid true)))
 
 (defn redirect-character [character dx dy]
   (assoc character :direction (character-direction dx dy)))
