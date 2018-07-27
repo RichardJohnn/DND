@@ -164,10 +164,6 @@ escape-string-regexp@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.2.tgz#4dbc2fe674e71949caf3fb2695ce7f2dc1d9a8d1"
 
-extend@~1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-1.2.1.tgz#a0f5fd6cfc83a5fe49ef698d60ec8a624dd4576c"
-
 extend@~3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
@@ -393,9 +389,9 @@ ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
-nan@2.3.5:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
+nan@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
 ndarray-pack@^1.1.1:
   version "1.2.1"
@@ -456,13 +452,6 @@ play-sound@0.0.7:
 pngjs@^2.0.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-2.3.1.tgz#11d1e12b9cb64d63e30c143a330f4c1f567da85f"
-
-pty.js@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/pty.js/-/pty.js-0.3.1.tgz#81f5bed332d6e5e7ab685688d1ba0373410d51b5"
-  dependencies:
-    extend "~1.2.1"
-    nan "2.3.5"
 
 punycode@^1.4.1:
   version "1.4.1"

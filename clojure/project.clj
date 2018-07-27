@@ -4,17 +4,18 @@
 
   :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.946"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.10.312"]
+                 [org.clojure/core.async "0.3.442"]
                  [funcool/promesa "1.9.0"]
                  [com.rpl/specter "1.0.3"]
                  ]
 
   ;:jvm-opts ["-Dclojure.server.repl={:port 5555 :accept clojure.core.server/repl}"]
-  :jvm-opts ["--add-modules" "java.xml.bind"]
+  ;:jvm-opts ["--add-modules" "java.xml.bind"]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.16-SNAPSHOT"]]
+            [lein-figwheel "0.5.16"]]
 
   :source-paths ["src" "test"]
 
@@ -41,8 +42,7 @@
                          :asset-path "target/server_dev"
                          :optimizations :none
                          :target :nodejs
-                         :source-map true}}
-             {:id "test"
+                         :source-map true}} {:id "test"
               :source-paths ["src" "test"]
               :compiler {
                          :main dnd.test-runner
