@@ -1,12 +1,16 @@
 (ns dnd.action-handlers
   (:require
-    [dnd.character :as character :refer [direction->offset]]
+    [dnd.character
+     :as character
+     :refer [direction->offset replace-inhabitant]]
     [dnd.util :refer [contain-x-and-y]]))
 
 (defn attack-block [block]
-  (let [{solid :solid} block]
-    (if solid
-      (assoc block :solid false)
+  (let [{habs :inhabitants} block
+        target (first habs)
+        new-item (:degrades-to target)]
+    (if new-item
+      (assoc block :inhabitants (replace-inhabitant habs target new-item))
       block)))
 
 (defn attack-handler [term level character]

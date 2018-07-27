@@ -1,6 +1,6 @@
 (ns dnd.character
   (:require [dnd.color :refer [color-name]]
-            [dnd.util :refer [coin-flip get-block-with-wrap has-some]]))
+            [dnd.util :refer [coin-flip get-block-with-wrap has-some index-of]]))
 
 (defonce base-character {:char "🐰"
                          :is-player false
@@ -76,8 +76,12 @@
 (defn rocks []
   (item-maker "☷" [130 130 130] "rubble"))
 
-(defn stone []
-  (-> (item-maker "▒" [130 130 130] "stone wall" :solid true)))
+(defn stone [] (item-maker
+                 "▒"
+                 [130 130 130]
+                 "stone wall"
+                 :solid true
+                 :degrades-to (rocks)))
 
 (defn redirect-character [character dx dy]
   (assoc character :direction (character-direction dx dy)))
@@ -97,13 +101,13 @@
         [updated-level updated-character])
       [level character]))) ; can't walk through solid blocks
 
-
-(defn makes-solid [item]
-  (:solid item))
+(defn replace-inhabitant [inhabitants target new-hab]
+  (if-let [index (index-of inhabitants target)]
+    (assoc inhabitants index new-hab)
+    inhabitants))
 
 (defn push-inhabitant-to-block [item block]
-  (let [block (if (makes-solid item) (assoc block :solid true :color "#b1b7b7") block)]
-    (assoc block :inhabitants (conj (:inhabitants block) item))))
+  (assoc block :inhabitants (conj (:inhabitants block) item)))
 
 (defn push-inhabitant [level x y item]
   (let [block (get-in level [x y])
