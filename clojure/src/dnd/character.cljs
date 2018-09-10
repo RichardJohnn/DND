@@ -61,7 +61,8 @@
                     (coin-flip "O" "o")
                     (rand-rgb-vec)
                     "a happy tree"
-                    :solid true)))
+                    :solid true
+                    :degrades-to (egg))))
 
 (defn pickaxe [] (item-maker
                    "T"
