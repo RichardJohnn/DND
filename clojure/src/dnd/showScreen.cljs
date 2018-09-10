@@ -5,12 +5,15 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
-(def window-width width)
-(def window-height height)
+(def window-width 10)
+(def window-height 10)
 
 (defonce terminal (nodejs/require "terminal-kit"))
 
 (defonce bresenham (nodejs/require "bresenham-js"))
+
+(defn character []  (-> dnd.core/clients deref first :character))
+(defn term []  (-> dnd.core/clients deref first :term))
 
 (defn end-points [character]
   (let [{:keys [x y]} character
@@ -61,8 +64,10 @@
     (concat shortened-line (list (nth line (count shortened-line))))
     line))
 
-(defn put-block [buffer block]
+(defn put-block [character buffer block]
   (let [{:keys [x y inhabitants color visible]} block
+        x (rem x window-width)
+        y (rem y window-height)
         has-inhabitant (boolean (seq inhabitants))
         fgcolor (or (:color (first inhabitants)) [0 0 0])
         [r g b] fgcolor
@@ -94,6 +99,8 @@
 
 (defn fov [character]
   (let [{:keys [x y direction view-distance]} character
+        ;x (inc (rem x window-width))
+        ;y (inc (rem y window-height))
         ends (end-points character)
         lines (map #(let [dx (first %)
                           dy (second %)
@@ -104,9 +111,22 @@
     lines))
 
 (defn viewable-coords [character level]
-  (let [fov-blocks (fov character)
-        viewable-coords (map (partial shorten-line level) fov-blocks)]
-    (apply concat viewable-coords)))
+  (->> (fov character)
+       (map (partial shorten-line level))
+       (apply concat)))
+
+(defn blocks-around [character]
+  (let [{:keys [x y]} character
+        x-low (-> x (/ window-width) js/Math.floor (* window-width))
+        x-hi (+ x-low window-width)
+        y-low (-> y (/ window-height) js/Math.floor (* window-height))
+        y-hi (+ y-low window-height)
+        row-array (range x-low x-hi)
+        col-array (range y-low y-hi)]
+    (apply concat
+           (for [x row-array]
+             (vec (map #(vec [x %]) col-array))))))
+
 
 
 (defn show-map-direct [term level character]
@@ -117,25 +137,35 @@
          (map get-in-level)
          (run! #(draw-block term %)))))
 
+(defn prnr [term args]
+  (.moveTo term 0 (inc window-width))
+  (prn args)
+  args)
+
 (defn show-map-with-buffer [term level character]
-  (let [
-        buffer ((.. terminal -ScreenBufferHD -create)
+  (let [buffer ((.. terminal -ScreenBufferHD -create)
                 #js {:dst    term
                      :width  window-width
                      :height window-height
                      })
         get-in-level (partial get-in level)]
 
-    (->> level
-         (viewable-coords character)
+    (.clear term)
+    (->> ;level
+         ;(viewable-coords character)
+
+         (blocks-around character)
+         ;(prnr term)
          (map get-in-level)
-         (run! #(put-block buffer %)))
+         (run! #(put-block character buffer %))
+         )
 
     (.draw buffer #js {:delta true})))
 
 
-(defn show-screen [term level character]
 
+
+(defn show-screen [term level character]
   (if (-> (.-support term) (aget "trueColor"))
     (show-map-with-buffer term level character)
     (show-map-direct term level character))
@@ -146,7 +176,7 @@
     (.moveTo (+ 2 window-width) 1 (str "HP: " (:hp character)))
     (.moveTo (+ 2 window-width) 2 (str "INV: " (count (:inventory character))))
     (.moveTo (+ 2 window-width) 3 (str "trueColor: " (.. term -support -trueColor)))
-    ;(.moveTo 0 (inc height) "got some text down below\n\n")
+    (.moveTo (+ 2 window-width) 4 (str "x: " (:x character) " y: " (:y character)))
     (.moveTo 0 (+ 10 window-height))))
 
 ;(.moveTo term 0 0
@@ -158,8 +188,7 @@
   (.moveTo term 0 (inc window-height)
            (if error
              "oh crap!"
-             (str "you stare at " (.-selectedText response)))
-           )
+             (str "you stare at " (.-selectedText response))))
   character)
 
 (defn show-inventory [term level character]

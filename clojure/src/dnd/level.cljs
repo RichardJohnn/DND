@@ -11,8 +11,8 @@
             :visible true
             })
 
-(def width  40)
-(def height 30)
+(def width  90)
+(def height 90)
 
 (defn make-block [x y]
   (let [is-solid (> (rand) .9)
