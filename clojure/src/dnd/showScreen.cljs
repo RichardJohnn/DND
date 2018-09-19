@@ -5,8 +5,8 @@
             [dnd.color :refer [COLOR color-to-vec]]
             ))
 
-(def window-width 10)
-(def window-height 10)
+(def window-width 50)
+(def window-height 25)
 
 (defonce terminal (nodejs/require "terminal-kit"))
 (defonce bresenham (nodejs/require "bresenham-js"))
