@@ -54,8 +54,6 @@
 (defn pusher! [& arguments]
   (swap! queue conj arguments))
 
-(defonce clients (atom []))
-
 (defn remove-client [client]
   (swap! clients (fn [fucks]
                    (remove #(= client (:client %)) fucks))))
