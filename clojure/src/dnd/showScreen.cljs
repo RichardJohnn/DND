@@ -9,38 +9,46 @@
 (def window-height 10)
 
 (defonce terminal (nodejs/require "terminal-kit"))
-
 (defonce bresenham (nodejs/require "bresenham-js"))
 
-(defn character []  (-> dnd.core/clients deref first :character))
-(defn term []  (-> dnd.core/clients deref first :term))
+(defn window-limits [character]
+  (let [{:keys [x y]} character
+        x-lo (-> x (/ window-width) js/Math.floor (* window-width))
+        x-hi (+ x-lo window-width)
+        y-lo (-> y (/ window-height) js/Math.floor (* window-height))
+        y-hi (+ y-lo window-height)]
+    [x-lo x-hi y-lo y-hi]))
 
 (defn end-points [character]
-  (let [{:keys [x y]} character
-        _width  (inc window-width)
-        _height (inc window-height)
-        zw (range 0 _width)
-        zh (range 0 _height)
-        ziy (range 0 y)
-        zix (range 0 x)
-        ++yh (range (inc y) window-height)
-        ++xw (range (inc x) window-width)
-        opposite-wall (vec (case (:direction character)
-           "n" (map #(vec [% 0])      zw)
-           "s" (map #(vec [% window-height]) zw)
-           "w" (map #(vec [0 %])      zh)
-           "e" (map #(vec [window-width %])  zh)))
-        adjenct-wall (vec (case (:direction character)
-           "n" (map #(vec [0 %])      ziy)
-           "s" (map #(vec [0 %])      ++yh)
-           "w" (map #(vec [% 0])      zix)
-           "e" (map #(vec [% 0])      ++xw)))
-        adjenct-wall2 (vec (case (:direction character)
-           "n" (map #(vec [window-width %])  ziy)
-           "s" (map #(vec [window-width %])  ++yh)
-           "w" (map #(vec [% window-height]) zix)
-           "e" (map #(vec [% window-height]) ++xw)))]
-    (concat opposite-wall adjenct-wall adjenct-wall2)))
+  (let [{:keys [x y direction]} character
+        [x-lo x-hi y-lo y-hi] (window-limits character)
+        zw (range x-lo x-hi)
+        zh (range y-lo y-hi)
+        opposite-wall (vec (case direction
+           "n" (map #(vec [% y-lo]) zw)
+           "s" (map #(vec [% y-hi]) zw)
+           "w" (map #(vec [x-lo %]) zh)
+           "e" (map #(vec [x-hi %]) zh)))
+        ;_ (println opposite-wall)
+        ;ziy (range 0 y)
+        ;zix (range 0 x)
+        ;++yh (range (inc y) window-height)
+        ;++xw (range (inc x) window-width)
+        ;adjenct-wall (vec (case direction
+           ;"n" (map #(vec [0 %])      ziy)
+           ;"s" (map #(vec [0 %])      ++yh)
+           ;"w" (map #(vec [% 0])      zix)
+           ;"e" (map #(vec [% 0])      ++xw)))
+        ;adjenct-wall2 (vec (case direction
+           ;"n" (map #(vec [window-width %])  ziy)
+           ;"s" (map #(vec [window-width %])  ++yh)
+           ;"w" (map #(vec [% window-height]) zix)
+           ;"e" (map #(vec [% window-height]) ++xw)))
+        ]
+    (concat opposite-wall
+            ;adjenct-wall
+            ;adjenct-wall2
+            )))
 
 (defn draw-x [term coords]
   (.color256    term 7)
@@ -51,18 +59,6 @@
 (defn draw-line [term line]
   (run!
     (partial draw-x term) line))
-
-(defn shorten-line [level line]
-  (def shortened-line (take-while #(let [[x y] %
-                                         x (min (dec window-width)  (max 0 x))
-                                         y (min (dec window-height) (max 0 y))
-                                         current-block (get-in level [x y])
-                                         solid  (has-some current-block :solid)]
-                                     (not solid))
-                                  line))
-  (if (apply not= (map last [shortened-line line]))
-    (concat shortened-line (list (nth line (count shortened-line))))
-    line))
 
 (defn put-block [character buffer block]
   (let [{:keys [x y inhabitants color visible]} block
@@ -99,8 +95,6 @@
 
 (defn fov [character]
   (let [{:keys [x y direction view-distance]} character
-        ;x (inc (rem x window-width))
-        ;y (inc (rem y window-height))
         ends (end-points character)
         lines (map #(let [dx (first %)
                           dy (second %)
@@ -108,26 +102,23 @@
                           end   #js[dx dy]]
                       (take view-distance (js->clj (bresenham start end))))
                    ends)]
+
     lines))
+
+(defn shorten-line [level line]
+  (def shortened-line (take-while #(let [[x y] %
+                                         current-block (get-in level [x y])
+                                         solid  (has-some current-block :solid)]
+                                     (not solid))
+                                  line))
+  (if (apply not= (map last [shortened-line line]))
+    (concat shortened-line (list (nth line (count shortened-line))))
+    line))
 
 (defn viewable-coords [character level]
   (->> (fov character)
        (map (partial shorten-line level))
        (apply concat)))
-
-(defn blocks-around [character]
-  (let [{:keys [x y]} character
-        x-low (-> x (/ window-width) js/Math.floor (* window-width))
-        x-hi (+ x-low window-width)
-        y-low (-> y (/ window-height) js/Math.floor (* window-height))
-        y-hi (+ y-low window-height)
-        row-array (range x-low x-hi)
-        col-array (range y-low y-hi)]
-    (apply concat
-           (for [x row-array]
-             (vec (map #(vec [x %]) col-array))))))
-
-
 
 (defn show-map-direct [term level character]
   (let [get-in-level (partial get-in level)]
@@ -150,11 +141,8 @@
                      })
         get-in-level (partial get-in level)]
 
-    (.clear term)
-    (->> ;level
-         ;(viewable-coords character)
-
-         (blocks-around character)
+    (->> level
+         (viewable-coords character)
          ;(prnr term)
          (map get-in-level)
          (run! #(put-block character buffer %))
